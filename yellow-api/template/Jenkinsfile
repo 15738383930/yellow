@@ -1,0 +1,51 @@
+pipeline {
+    agent {
+        node {
+            label 'maven'
+        }
+    }
+
+    environment {
+        DOCKER_CREDENTIAL_ID = 'harbor-id'
+        KUBECONFIG_CREDENTIAL_ID = 'kubeconfig'
+        REGISTRY = 'harbor.unismartcity.com:15050'
+        NAMESPACE = 'zhcs-test' // 需要更改为您自己的 Docker Hub Namespace
+        GITLAB_CREDENTIAL_ID = 'gitlab-liaohuan'
+        PROJECT_NAME = 'zhcs-epoi-jj-java'
+    }
+
+    stages {
+        stage('拉取代码&打包') {
+            steps {
+                sh 'echo 正在构建 "$PROJECT_NAME" "$PROJECT_VERSION" 将会推送到"$REGISTRY"'
+                container('maven') {
+                    sh 'mvn clean package -Dmaven.test.skip=true'
+                }
+            }
+        }
+
+        stage('构建镜像&推送镜像') {
+            steps {
+                container('maven') {
+                    sh 'cd $PROJECT_NAME && docker build -f template/Dockerfile -t $REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH_NAME-$BUILD_NUMBER .'
+                    withCredentials([usernamePassword(passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME', credentialsId: "$DOCKER_CREDENTIAL_ID",)]) {
+                        sh """
+                            echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} ${REGISTRY} --password-stdin
+                            docker push $REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH_NAME-$BUILD_NUMBER
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('部署到kubernetes') {
+            steps {
+                container("maven") {
+                    withCredentials([kubeconfigFile(credentialsId: env.KUBECONFIG_CREDENTIAL_ID,variable: 'KUBECONFIG')]) {
+                        sh 'envsubst < $PROJECT_NAME/template/deploy.yaml | kubectl apply -f -'
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yellow.api.mapper.SysDetailLogMapper">
+  <resultMap id="BaseResultMap" type="com.yellow.api.model.SysDetailLog">
+    <!--@mbg.generated generated on Thu Apr 22 16:09:17 CST 2021.-->
+    <!--@Table sys_detail_log-->
+    <id column="log_id" jdbcType="INTEGER" property="logId" />
+    <id column="log_type" jdbcType="INTEGER" property="logType" />
+    <result column="detail" jdbcType="LONGVARCHAR" property="detail" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Thu Apr 22 16:09:17 CST 2021.-->
+    log_id, log_type, detail
+  </sql>
+
+  <delete id="deleteOperateLog" parameterType="java.lang.Integer">
+    delete from sys_detail_log
+    where log_type = 2 and exists (select id from sys_operate_log where id = log_id and operate_time &lt; DATE_SUB(CURDATE(), INTERVAL 6 MONTH))
+  </delete>
+
+  <delete id="deleteLoginLog" parameterType="java.lang.Integer">
+    delete from sys_detail_log
+    where log_type = 1 and exists (select id from sys_login_log where id = log_id and login_time &lt; DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+  </delete>
+</mapper>

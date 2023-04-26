@@ -1,7 +1,7 @@
-# yellow-api
+# yellow
 
 #### Description
-同用api
+yellow后台api
 
 #### Software Architecture
 Software architecture description

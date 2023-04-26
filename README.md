@@ -1,7 +1,7 @@
-# yellow-api
+# yellow
 
 #### 介绍
-同用api
+yellow后台api
 
 #### 软件架构
 软件架构说明

@@ -1,0 +1,86 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: $PROJECT_NAME
+  namespace: $NAMESPACE
+  labels:
+    app: $PROJECT_NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $PROJECT_NAME
+  template:
+    metadata:
+      labels:
+        app: $PROJECT_NAME
+    spec:
+      containers:
+        - name: $PROJECT_NAME
+          image: $REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH_NAME-$BUILD_NUMBER
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 10m
+              memory: 10Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector: ## 设置node筛选器，在特定label的节点上启动
+        host-net: "dmz"
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: $PROJECT_NAME
+  namespace: $NAMESPACE
+  labels:
+    app: $PROJECT_NAME
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  #      nodePort: 32767
+  selector:
+    app: $PROJECT_NAME
+  #  type: NodePort
+  sessionAffinity: None
+
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: $PROJECT_NAME
+  namespace: $NAMESPACE
+spec:
+  rules:
+    - host: $NAMESPACE.$PROJECT_NAME.0a0965ea.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: $PROJECT_NAME
+                port:
+                  number: 8080
