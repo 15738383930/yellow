@@ -3,8 +3,10 @@ package com.yellow.api.security;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yellow.api.mapper.SysMenuMapper;
+import com.yellow.api.mapper.SysRoleMapper;
 import com.yellow.api.mapper.SysUserMapper;
 import com.yellow.api.model.SysMenu;
+import com.yellow.api.model.SysRole;
 import com.yellow.api.model.SysUser;
 import com.yellow.api.model.code.SysUserCode;
 import com.yellow.api.model.response.AuthCode;
@@ -16,7 +18,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 登陆身份认证
@@ -29,6 +33,9 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
     private SysUserMapper sysUserMapper;
+
+    @Resource
+    private SysRoleMapper sysRoleMapper;
 
     @Resource
     private SysMenuMapper sysMenuMapper;
@@ -55,13 +62,16 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             ExceptionCast.cast(AuthCode.AUTH_CREDENTIAL_ERROR);
         }
+        // 当前用户所拥有的角色和权限集合
+        final List<String> codes = Stream.concat(sysRoleMapper.selectRoleByUserId(user.getId()).stream().map(SysRole::getRoleCode),
+                sysMenuMapper.selectPermissionByUserId(user.getId()).stream().map(SysMenu::getCode)).collect(Collectors.toList());
         return JwtUserDetails.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .id(user.getId())
                 .name(user.getName())
                 // 权限code集合
-                .codes(sysMenuMapper.selectPermissionByUserId(user.getId()).stream().map(SysMenu::getCode).collect(Collectors.toList()))
+                .codes(codes)
                 .build();
     }
 }

@@ -20,4 +20,26 @@
     id, role_code, role_name, `status`, remark, is_del, create_time, create_by, update_time, 
     update_by
   </sql>
+
+  <select id="selectRoleByMenuId" parameterType="Integer" resultType="SysRole">
+    SELECT
+      id,
+      role_code,
+      role_name
+    FROM sys_role
+    WHERE is_del = 0
+      and id IN
+        (SELECT role_id FROM sys_role_menu WHERE menu_id = #{value}))
+  </select>
+
+  <select id="selectRoleByUserId" parameterType="Integer" resultType="SysRole">
+    SELECT
+      id,
+      role_code,
+      role_name
+    FROM sys_role
+    WHERE is_del = 0
+      and id IN
+      (SELECT role_id FROM sys_user_role WHERE user_id = #{value})
+  </select>
 </mapper>

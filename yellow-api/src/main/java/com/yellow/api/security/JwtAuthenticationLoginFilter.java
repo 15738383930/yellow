@@ -10,11 +10,13 @@ import com.yellow.common.constant.Constants;
 import com.yellow.common.entity.response.ResponseResult;
 import com.yellow.common.exception.BizException;
 import com.yellow.common.util.RedisUtils;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -29,10 +31,14 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2020年6月2日
  */
 @Component
-public class JwtAuthenticationLoginFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Resource
     private RedisUtils redisUtils;
+
+    protected JwtAuthenticationLoginFilter(AuthenticationManager authenticationManager) {
+        super(new AntPathRequestMatcher("/auth/login", "POST"), authenticationManager);
+    }
 
     /**
      * 执行登录认证
@@ -47,7 +53,7 @@ public class JwtAuthenticationLoginFilter extends UsernamePasswordAuthentication
         try {
             JwtUserDetails user = JSON.parseObject(request.getInputStream(), JwtUserDetails.class);
             final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-            setDetails(request, token);
+            this.setDetails(request, token);
             return this.getAuthenticationManager().authenticate(token);
         } catch (Exception e) {
             if(e instanceof BadCredentialsException){
@@ -87,5 +93,8 @@ public class JwtAuthenticationLoginFilter extends UsernamePasswordAuthentication
         ResponseResult.output(response, LoginResult.success(token));
     }
 
+    protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
+        authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
+    }
 
 }

@@ -33,8 +33,8 @@ import java.io.IOException;
  */
 @Slf4j
 @RestController
-@RequestMapping("/auth")
 @Api(tags = "鉴权中心")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Resource

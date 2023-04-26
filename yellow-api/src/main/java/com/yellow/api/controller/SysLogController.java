@@ -21,7 +21,7 @@ public class SysLogController {
     private SysLogService sysLogService;
 
     @ApiOperation("分页查询列表数据")
-    @PreAuthorize("hasAuthority('sys:log:list')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAuthority('sys:log:list')")
     @PostMapping(value = "/page/list/{page}/{size}")
     public QueryResponseResult<SysOperateLog> pageList(@PathVariable("page") int page, @PathVariable("size") int size) {
         return sysLogService.pageList(page, size);

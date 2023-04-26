@@ -1,6 +1,7 @@
 package com.yellow.api.config;
 
 import com.yellow.api.autoconfigure.SystemProperties;
+import com.yellow.api.security.JwtAuthenticationLoginFilter;
 import com.yellow.common.entity.response.CommonCode;
 import com.yellow.common.entity.response.ResponseResult;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.Header;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -40,7 +42,7 @@ public class WebSecurityConfig {
     private UserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain filterChain(AuthenticationManager authenticationManager, HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.
                 // 跨域
                 cors().and().headers().addHeaderWriter(this.getResponseCors()).
@@ -52,13 +54,14 @@ public class WebSecurityConfig {
                     antMatchers(SystemProperties.auth.getAnon().toArray(new String[]{})).permitAll().
                     // 所有请求都需认证
                     anyRequest().authenticated().
+                and()./*addFilterBefore(jwtAuthenticationLoginFilter, UsernamePasswordAuthenticationFilter.class).*/
+                formLogin().loginProcessingUrl("/auth/login").
                 and().rememberMe().key("yellow").
-//                addFilterAfter(jwtAuthenticationLoginFilter, BasicAuthenticationFilter.class)
                 // 异常处理
                 and().exceptionHandling().
-                    // 认证授权的异常处理
+                    // 认证的异常处理
                     authenticationEntryPoint((request, response, e) -> ResponseResult.output(response, CommonCode.UNAUTHENTICATED)).
-                    // 拒绝访问
+                    // 授权的异常处理
                     accessDeniedHandler((request, response, e) -> ResponseResult.output(response, CommonCode.UNAUTHORISE)).
                 // token鉴权 过滤器
                 // 启用http 基础验证

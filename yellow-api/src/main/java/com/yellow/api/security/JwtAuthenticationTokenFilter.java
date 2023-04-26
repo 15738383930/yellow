@@ -1,7 +1,9 @@
 package com.yellow.api.security;
 
+import com.alibaba.fastjson.JSON;
 import com.yellow.api.autoconfigure.SystemProperties;
 import com.yellow.api.model.response.AuthCode;
+import com.yellow.api.util.SecurityUtils;
 import com.yellow.common.constant.Constants;
 import com.yellow.common.exception.ExceptionCast;
 import com.yellow.common.util.RedisUtils;
@@ -14,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -45,12 +48,11 @@ public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String token = JwtTokenUtils.getToken();
+        // 未携带token，放行（AuthenticationEntryPoint会感知并处理异常）
         if (StringUtils.isEmpty(token)) {
             chain.doFilter(request, response);
             return;
         }
-        String username = JwtTokenUtils.getUsernameFromToken(token);
-        String key = Constants.LOGIN_TOKEN_KEY + username;
 
         // 校验token是否过期
         if (JwtTokenUtils.isTokenExpired(token)) {
@@ -58,10 +60,14 @@ public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        // 校验用户是否登录超时
+        String username = JwtTokenUtils.getUsernameFromToken(token);
+        String key = Constants.LOGIN_TOKEN_KEY + username;
+
+        // Redis信息过期，重新入库查询（提高时效性）
         if (!redisUtils.exists(key)) {
-            ExceptionCast.cast(AuthCode.AUTH_LOGIN_TIMEOUT);
-            return;
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            // 将用户信息存入Redis
+            redisUtils.set(Constants.LOGIN_TOKEN_KEY + userDetails.getUsername(), JSON.toJSONString(userDetails), SystemProperties.auth.getUserValiditySeconds());
         }
 
         // 刷新过期时间
