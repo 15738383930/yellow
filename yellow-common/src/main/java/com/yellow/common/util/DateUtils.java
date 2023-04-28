@@ -333,7 +333,7 @@ public class DateUtils {
         for (int i = 0; i < n; i++) {
             String dateFieldToUpperCase = dateField.substring(0, 1).toUpperCase() + dateField.substring(1);
             if (temp < num) {
-                Date currentDate = (Date) oldList.get(temp).getClass().getMethod("get" + dateFieldToUpperCase).invoke(oldList.get(temp));
+                Date currentDate = (Date) oldList.get(temp).getClass().getMethod("fail" + dateFieldToUpperCase).invoke(oldList.get(temp));
                 // 开始日期小于当前记录日期 增加自定义数据
                 if (start.compareTo(currentDate) < 0) {
                     newList.add(data.get());
@@ -383,7 +383,7 @@ public class DateUtils {
         for (int i = 0; i < n; i++) {
             String dateFieldToUpperCase = dateField.substring(0, 1).toUpperCase() + dateField.substring(1);
             if (temp < num) {
-                Date currentDate = DateUtils.dateTime((String) oldList.get(temp).getClass().getMethod("get" + dateFieldToUpperCase).invoke(oldList.get(temp)), format);
+                Date currentDate = DateUtils.dateTime((String) oldList.get(temp).getClass().getMethod("fail" + dateFieldToUpperCase).invoke(oldList.get(temp)), format);
                 // 开始日期小于当前记录日期 增加自定义数据
                 if (start.compareTo(currentDate) < 0) {
                     newList.add(data.get());

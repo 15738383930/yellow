@@ -1,11 +1,15 @@
 package com.yellow.api.config;
 
+import com.alibaba.fastjson.JSON;
 import com.yellow.api.autoconfigure.SystemProperties;
 import com.yellow.api.security.JwtAuthenticationLoginFilter;
+import com.yellow.api.service.SysCaptchaService;
 import com.yellow.common.entity.response.CommonCode;
 import com.yellow.common.entity.response.ResponseResult;
+import com.yellow.common.util.RedisUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -41,7 +45,14 @@ public class WebSecurityConfig {
     @Resource
     private UserDetailsService userDetailsService;
 
+    @Resource
+    private SysCaptchaService sysCaptchaService;
+
+    @Resource
+    private RedisUtils redisUtils;
+
     @Bean
+    @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.
                 // 跨域
@@ -54,7 +65,7 @@ public class WebSecurityConfig {
                     antMatchers(SystemProperties.auth.getAnon().toArray(new String[]{})).permitAll().
                     // 所有请求都需认证
                     anyRequest().authenticated().
-                and()./*addFilterBefore(jwtAuthenticationLoginFilter, UsernamePasswordAuthenticationFilter.class).*/
+                and().addFilterAt(new JwtAuthenticationLoginFilter(authenticationManager(http), redisUtils, sysCaptchaService), UsernamePasswordAuthenticationFilter.class).
                 formLogin().loginProcessingUrl("/auth/login").
                 and().rememberMe().key("yellow").
                 // 异常处理

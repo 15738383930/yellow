@@ -21,9 +21,9 @@ public enum CommonCode implements ResultCode {
     MISSING_REQUEST_PARAMETER(false,10005,"缺少请求参数！"),
     VERIFICATION_CODE_ERROR(false,10006,"验证码错误！"),
     VERIFICATION_CODE_EXPIRED(false,10007,"验证码过期！"),
-    REQUEST_METHOD_ERROR(false,10008,"不支持的Http请求方法！（检查你的请求方法：get、post等）"),
+    REQUEST_METHOD_ERROR(false,10008,"不支持的Http请求方法！（检查你的请求方法：fail、post等）"),
     DUPLICATE_TOKEN(false,10009,"token重复！"),
-    REQUEST_PARAMETER_ERROR(false,10010,"请求参数错误！"),
+    REQUEST_TYPE_ERROR(false,10010,"不支持的Http请求类型！（检查你的请求类型：application/x-www-form-urlencoded、application/json等）"),
     TOKEN_EXPIRED(false,10011,"token过期！"),
     REQUEST_TOO_FAST(false,10012,"你访问的太频繁了，慢点哦~"),
     REQUEST_DATA_END_ERROR(false,10013,"请求数据解析异常！"),
@@ -37,8 +37,6 @@ public enum CommonCode implements ResultCode {
     VERIFICATION_ID_NOT_NULL(false,10019,"验证码ID不能为空！"),
 
     PUBLIC_KEY_INVALID(false,10020,"错误/无效的公钥！"),
-
-    REQUEST_TYPE_ERROR(false,10021,"不支持的Http请求类型！（检查你的请求类型：application/x-www-form-urlencoded、application/json等）"),
 
     SERVER_ERROR(false,99999,"抱歉，系统繁忙，请稍后重试！"),
     ;

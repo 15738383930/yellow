@@ -30,11 +30,15 @@ public class MethodArgumentNotValidResponseResult extends ResponseResult {
         this.promptInfo = promptInfo;
     }
 
-    public static MethodArgumentNotValidResponseResult get(Map<String, String> promptInfo){
-        return new MethodArgumentNotValidResponseResult(CommonCode.REQUEST_PARAMETER_ERROR, promptInfo);
+    public static MethodArgumentNotValidResponseResult success(){
+        return new MethodArgumentNotValidResponseResult(CommonCode.SUCCESS, null);
     }
 
-    public static MethodArgumentNotValidResponseResult get(ResultCode resultCode, Map<String, String> promptInfo){
+    public static MethodArgumentNotValidResponseResult fail(Map<String, String> promptInfo){
+        return new MethodArgumentNotValidResponseResult(CommonCode.INVALID_PARAM, promptInfo);
+    }
+
+    public static MethodArgumentNotValidResponseResult fail(ResultCode resultCode, Map<String, String> promptInfo){
         return new MethodArgumentNotValidResponseResult(resultCode, promptInfo);
     }
 }

@@ -42,4 +42,18 @@ public class ApiExceptionCatch extends ExceptionCatch {
         // 不过，为了把spring security体现的淋漓尽致，还是选择抛出该异常，让spring security去处理
         throw e;
     }
+
+    /**
+     * 捕获LoginException异常<p>
+     * @author Hao.
+     * @date 2020/4/4 11:42
+     * @param e
+     * @return ResponseResult
+     */
+    @ExceptionHandler(LoginException.class)
+    public ResponseResult loginException(LoginException e){
+        // 记录异常日志
+        log.warn("catch LoginException : {}", e.getMessage());
+        return ResponseResult.get(e.getResultCode());
+    }
 }

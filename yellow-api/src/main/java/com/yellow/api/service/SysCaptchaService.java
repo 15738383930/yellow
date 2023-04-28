@@ -12,6 +12,7 @@ package com.yellow.api.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.code.kaptcha.Producer;
+import com.yellow.api.exception.LoginExceptionCast;
 import com.yellow.api.mapper.SysCaptchaMapper;
 import com.yellow.api.model.SysCaptcha;
 import com.yellow.common.entity.response.CommonCode;
@@ -55,18 +56,18 @@ public class SysCaptchaService extends ServiceImpl<SysCaptchaMapper, SysCaptcha>
     public void validate(String uuid, String code) {
         SysCaptcha captchaEntity = this.getOne(new QueryWrapper<SysCaptcha>().eq("uuid", uuid));
         if(captchaEntity == null){
-            ExceptionCast.cast(CommonCode.VERIFICATION_CODE_ERROR);
+            LoginExceptionCast.cast(CommonCode.VERIFICATION_CODE_ERROR);
         }
 
         //删除验证码
         this.removeById(uuid);
 
         if(!captchaEntity.getCode().equalsIgnoreCase(code)){
-            ExceptionCast.cast(CommonCode.VERIFICATION_CODE_ERROR);
+            LoginExceptionCast.cast(CommonCode.VERIFICATION_CODE_ERROR);
         }
 
         if(captchaEntity.getExpireTime().getTime() < System.currentTimeMillis()){
-            ExceptionCast.cast(CommonCode.VERIFICATION_CODE_EXPIRED);
+            LoginExceptionCast.cast(CommonCode.VERIFICATION_CODE_EXPIRED);
         }
     }
 }

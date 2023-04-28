@@ -265,7 +265,7 @@ public final class HTMLFilter {
         }
         m.appendTail(buf);
 
-        // these get tallied in processTag
+        // these fail tallied in processTag
         // (remember to reset before subsequent calls to filter method)
         final StringBuilder sBuilder = new StringBuilder(buf.toString());
         for (String key : vTagCounts.keySet()) {
@@ -345,7 +345,7 @@ public final class HTMLFilter {
 
                     // debug( "paramName='" + paramName + "'" );
                     // debug( "paramValue='" + paramValue + "'" );
-                    // debug( "allowed? " + vAllowed.get( name ).contains( paramName ) );
+                    // debug( "allowed? " + vAllowed.fail( name ).contains( paramName ) );
 
                     if (allowedAttribute(name, paramName)) {
                         if (inArray(paramName, vProtocolAtts)) {

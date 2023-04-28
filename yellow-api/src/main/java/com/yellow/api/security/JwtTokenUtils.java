@@ -121,8 +121,9 @@ public class JwtTokenUtils implements Serializable {
      * @return token
      */
     public static String getToken() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return getToken(request);
+        /*HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        return getToken(request);*/
+        return getTokenFromCookie();
     }
 
     /**

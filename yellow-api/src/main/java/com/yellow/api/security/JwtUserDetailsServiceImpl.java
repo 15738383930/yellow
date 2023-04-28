@@ -2,6 +2,7 @@ package com.yellow.api.security;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.yellow.api.exception.LoginExceptionCast;
 import com.yellow.api.mapper.SysMenuMapper;
 import com.yellow.api.mapper.SysRoleMapper;
 import com.yellow.api.mapper.SysUserMapper;
@@ -11,7 +12,6 @@ import com.yellow.api.model.SysUser;
 import com.yellow.api.model.code.SysUserCode;
 import com.yellow.api.model.response.AuthCode;
 import com.yellow.common.constant.Constants;
-import com.yellow.common.exception.ExceptionCast;
 import com.yellow.common.util.RedisUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -60,7 +60,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
                 .eq(SysUser::getStatus, Integer.parseInt(SysUserCode.STATUS_1.getK()))
                 .eq(SysUser::getIsDel, Integer.parseInt(SysUserCode.IS_DEL_0.getK())));
         if (user == null) {
-            ExceptionCast.cast(AuthCode.AUTH_CREDENTIAL_ERROR);
+            LoginExceptionCast.cast(AuthCode.AUTH_CREDENTIAL_ERROR);
         }
         // 当前用户所拥有的角色和权限集合
         final List<String> codes = Stream.concat(sysRoleMapper.selectRoleByUserId(user.getId()).stream().map(SysRole::getRoleCode),

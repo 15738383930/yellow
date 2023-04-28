@@ -6,6 +6,7 @@ import com.yellow.common.entity.response.MethodArgumentNotValidResponseResult;
 import com.yellow.common.entity.response.ResponseResult;
 import com.yellow.common.entity.response.ResultCode;
 import com.yellow.common.util.ThrowableUtils;
+import com.yellow.common.util.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 异常捕获处理器<p>
@@ -71,9 +73,26 @@ public class ExceptionCatch {
         log.warn("catch MethodArgumentNotValidException : {}", e.getMessage());
         BindingResult result = e.getBindingResult();
         Map<String, String> map = new HashMap<>();
-        result.getFieldErrors().forEach(o ->  map.put(o.getField(), o.getDefaultMessage()));
+        result.getFieldErrors().forEach(o -> map.put(o.getField(), o.getDefaultMessage()));
 
-        return MethodArgumentNotValidResponseResult.get(map);
+        return MethodArgumentNotValidResponseResult.fail(map);
+    }
+
+    /**
+     * 捕获手动校验的非法参数异常{@link ValidateUtils}
+     * @param e
+     * @return
+     * @author zhouhao
+     * @date  2021/4/8 11:30
+     */
+    @ExceptionHandler(ValidationParameterException.class)
+    public ResponseResult validationParameterException(ValidationParameterException e) {
+
+        // 记录异常日志
+        log.warn("catch ValidationParameterException : {}", e.getMessage());
+
+        return MethodArgumentNotValidResponseResult.fail(e.getParameters().stream()
+                .collect(Collectors.toMap(ValidationParameterException.Parameter::getFieldName, ValidationParameterException.Parameter::getMessage)));
     }
 
     /**
