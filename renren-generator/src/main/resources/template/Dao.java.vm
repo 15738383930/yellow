@@ -1,0 +1,22 @@
+package ${package}.${moduleName}.mapper;
+
+import ${package}.${moduleName}.entity.${className};
+import ${package}.${moduleName}.entity.ext.${className}Ext;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import ${package}.${moduleName}.entity.request.Query${className}Request;
+
+import java.util.List;
+
+/**
+ * ${comments}持久层
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @since ${datetime}
+ */
+public interface ${className}Mapper extends BaseMapper<${className}> {
+
+    List<${className}Ext> findList(Query${className}Request request);
+	
+}

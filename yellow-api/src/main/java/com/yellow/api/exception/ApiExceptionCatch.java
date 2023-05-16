@@ -1,9 +1,13 @@
 package com.yellow.api.exception;
 
+import com.yellow.api.model.response.AuthCode;
 import com.yellow.common.entity.response.ResponseResult;
+import com.yellow.common.exception.BizException;
 import com.yellow.common.exception.ExceptionCatch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -25,10 +29,11 @@ public class ApiExceptionCatch extends ExceptionCatch {
     static {
         // 这里，这个异常可以不用定义了。spring security的accessDeniedHandler会捕获该异常
 //        builder.put(AccessDeniedException.class, CommonCode.UNAUTHORISE);
+        builder.put(BadCredentialsException.class, AuthCode.AUTH_CREDENTIAL_ERROR);
     }
 
     /**
-     * 捕获AccessDeniedException异常<p>
+     * 捕获接口授权异常<p>
      *     如果把AccessDeniedException定义在静态块中，该方法就不用实现了。捕获Exception异常时，会得到AccessDeniedException并返回报错信息
      *     也就是用不到spring security的accessDeniedHandler了
      * @author Hao.
@@ -44,16 +49,13 @@ public class ApiExceptionCatch extends ExceptionCatch {
     }
 
     /**
-     * 捕获LoginException异常<p>
+     * 捕获登录认证异常<p>
      * @author Hao.
      * @date 2020/4/4 11:42
      * @param e
-     * @return ResponseResult
      */
-    @ExceptionHandler(LoginException.class)
-    public ResponseResult loginException(LoginException e){
-        // 记录异常日志
-        log.warn("catch LoginException : {}", e.getMessage());
-        return ResponseResult.get(e.getResultCode());
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseResult internalAuthenticationServiceException(InternalAuthenticationServiceException e){
+        return ResponseResult.get(((BizException) e.getCause()).getResultCode());
     }
 }

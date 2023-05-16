@@ -22,7 +22,7 @@ public enum AuthCode implements ResultCode {
     AUTH_LOGIN_TOKEN_SAVEFAIL(false,21008,"登录授权令牌保存失败！"),
     AUTH_LOGIN_AUTHSERVER_NOTFOUND(false,21009,"未找到登录认证授权的服务器！"),
     AUTH_LOGIN_ERROR_CONTROL(false, 21010, "登录失败的次数过多，您的电脑被管制一小时，请稍后再试吧！"),
-    AUTH_LOGINED(false, 21011, "您已经登录了，请退出登录后再试！"),
+    AUTH_DISABLE(false, 21011, "用户已被禁用！"),
     AUTH_LOGOUT_ERROR(false, 21012, "登出失败，请携带您的token令牌，否则无需登出！"),
     AUTH_LOGIN_TIMEOUT(false, 21013, "登录超时，请重新登录！"),
     AUTH_PWD_ERROR(false,21014,"密码错误！"),

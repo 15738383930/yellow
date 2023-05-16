@@ -2,10 +2,7 @@ package com.yellow.api.security;
 
 import com.alibaba.fastjson.JSON;
 import com.yellow.api.autoconfigure.SystemProperties;
-import com.yellow.api.model.response.AuthCode;
-import com.yellow.api.util.SecurityUtils;
 import com.yellow.common.constant.Constants;
-import com.yellow.common.exception.ExceptionCast;
 import com.yellow.common.util.RedisUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -33,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2020年6月2日
  */
 @Component
-public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
+public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Resource
     private UserDetailsService userDetailsService;
@@ -41,22 +38,12 @@ public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
     @Resource
     private RedisUtils redisUtils;
 
-    public JwtAuthenticationTokenFilter(AuthenticationManager authenticationManager) {
-        super(authenticationManager);
-    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String token = JwtTokenUtils.getToken();
         // 未携带token，放行（AuthenticationEntryPoint会感知并处理异常）
         if (StringUtils.isEmpty(token)) {
             chain.doFilter(request, response);
-            return;
-        }
-
-        // 校验token是否过期
-        if (JwtTokenUtils.isTokenExpired(token)) {
-            ExceptionCast.cast(AuthCode.AUTH_TOKEN_EXPIRED);
             return;
         }
 
@@ -80,7 +67,7 @@ public class JwtAuthenticationTokenFilter extends BasicAuthenticationFilter {
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (JwtTokenUtils.validateToken(token, userDetails.getUsername())) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

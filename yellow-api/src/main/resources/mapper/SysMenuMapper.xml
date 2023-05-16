@@ -1,39 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yellow.api.mapper.SysMenuMapper">
-  <resultMap id="BaseResultMap" type="com.yellow.api.model.SysMenu">
-    <!--@mbg.generated-->
-    <!--@Table sys_menu-->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="code" jdbcType="VARCHAR" property="code" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="routing" jdbcType="VARCHAR" property="routing" />
-    <result column="level" jdbcType="INTEGER" property="level" />
-    <result column="icon" jdbcType="VARCHAR" property="icon" />
-    <result column="sort" jdbcType="INTEGER" property="sort" />
-    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
-    <result column="is_hidden" jdbcType="INTEGER" property="isHidden" />
-    <result column="is_del" jdbcType="INTEGER" property="isDel" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+
+  <resultMap id="menuTreeMap" type="SysMenuExt">
+    <id column="id0" property="id" />
+    <result column="menu_name0" property="menuName" />
+    <result column="type0" property="type" />
+    <result column="url0" property="url" />
+    <result column="parent_id0" property="parentId" />
+    <result column="icon0" property="icon" />
+    <collection property="children" ofType="SysMenuExt">
+      <id column="id1" property="id" />
+      <result column="menu_name1" property="menuName" />
+      <result column="type1" property="type" />
+      <result column="url1" property="url" />
+      <result column="parent_id1" property="parentId" />
+      <result column="icon1" property="icon" />
+    </collection>
   </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, code, `name`, routing, `level`, icon, sort, parent_id, is_hidden, is_del, create_time, 
-    create_by, update_time, update_by
-  </sql>
 
   <select id="selectPermissionByUserId" parameterType="Integer" resultType="SysMenu">
     SELECT
       id,
-      code,
-      name
+      menu_name,
+      auth_code
     FROM sys_menu
-    WHERE is_del = 0
+    WHERE is_del = 0 and type = 2
+    <if test="@java.util.Objects@nonNull(userId)">
       and id IN
         (SELECT menu_id FROM sys_role_menu WHERE role_id IN
-        (SELECT role_id FROM sys_user_role WHERE user_id = #{value}))
+            (SELECT role_id FROM sys_user_role WHERE user_id = #{userId}))
+    </if>
+  </select>
+
+  <select id="selectAllMenu" resultType="SysMenu">
+    select * from sys_menu where type in (0, 1) order by sort
+  </select>
+
+  <select id="menuTree" resultMap="menuTreeMap">
+    select
+      a.id id0,
+      a.menu_name menu_name0,
+      a.type type0,
+      a.url url0,
+      a.parent_id parent_id0,
+      a.icon icon0,
+
+      b.id id1,
+      b.menu_name menu_name1,
+      b.type type1,
+      b.url url1,
+      b.parent_id parent_id1,
+      b.icon icon1
+    from sys_menu a
+      LEFT JOIN sys_menu b on a.id = b.parent_id
+    where a.parent_id = 0 and a.is_del = 0 and b.is_del = 0
+      <if test="@java.util.Objects@nonNull(userId)">
+        and a.id in
+          <foreach collection="menuIds" item="o" open="(" separator="," close=")">
+             #{o}
+          </foreach>
+        and b.id in
+          <foreach collection="menuIds" item="o" open="(" separator="," close=")">
+             #{o}
+          </foreach>
+      </if>
   </select>
 </mapper>

@@ -39,7 +39,20 @@
       role_name
     FROM sys_role
     WHERE is_del = 0
-      and id IN
-      (SELECT role_id FROM sys_user_role WHERE user_id = #{value})
+    <if test="@java.util.Objects@nonNull(userId)">
+      and id IN (SELECT role_id FROM sys_user_role WHERE user_id = #{userId})
+    </if>
+  </select>
+
+  <select id="findList" resultType="SysRole">
+    select * from sys_role
+    <where>
+      is_del = 0
+      <if test="@com.yellow.common.util.StringUtils@isNotEmpty(roleName)">
+        and role_name like '${roleName}%'
+      </if>
+      <include refid="com.baomidou.mybatisplus.core.mapper.BaseMapper.Base_DataPermissions_Where" />
+    </where>
+    order by update_time desc
   </select>
 </mapper>

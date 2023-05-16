@@ -1,13 +1,13 @@
 package com.yellow.api.model.code;
 
-import org.apache.commons.lang3.StringUtils;
+import com.stars.datachange.model.code.BaseCode;
 
 /**
  * 系统角色代码枚举
  * @author zhouhao
  * @date  2021/3/23 13:11
  */
-public enum SysRoleCode {
+public enum SysRoleCode implements BaseCode {
 
     /**
      * 角色状态
@@ -31,27 +31,19 @@ public enum SysRoleCode {
         this.v = v;
     }
 
-    public String getT() {
+    @Override
+    public String t() {
         return t;
     }
 
-    public String getK() {
+    @Override
+    public String k() {
         return k;
     }
 
-    public String getV() {
+    @Override
+    public String v() {
         return v;
     }
 
-    public static String getValue(String t, String k) {
-        if (StringUtils.isNotEmpty(k)) {
-            SysRoleCode[] values = SysRoleCode.values();
-            for (SysRoleCode code : values) {
-                if (code.getT().equals(t) && code.getK().equals(k)) {
-                    return code.getV();
-                }
-            }
-        }
-        return k;
-    }
 }

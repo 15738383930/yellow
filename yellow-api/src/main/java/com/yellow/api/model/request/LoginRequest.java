@@ -35,4 +35,7 @@ public class LoginRequest extends RequestData {
     @NotBlank(message = "验证码不能为空")
     @ApiModelProperty(value="验证码" )
     private String captcha;
+
+    @ApiModelProperty(value="记住我" )
+    private boolean rememberMe;
 }

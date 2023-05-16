@@ -1,27 +1,23 @@
 package com.yellow.api.aspect;
 
 import com.alibaba.fastjson.JSON;
-import com.yellow.api.exception.LoginExceptionCast;
-import com.yellow.api.mapper.SysDetailLogMapper;
-import com.yellow.api.mapper.SysLoginLogMapper;
 import com.yellow.api.model.SysDetailLog;
 import com.yellow.api.model.SysLoginLog;
 import com.yellow.api.model.code.SysDetailLogCode;
+import com.yellow.api.model.request.LoginRequest;
 import com.yellow.api.model.response.AuthCode;
+import com.yellow.api.service.SysLogService;
 import com.yellow.api.util.SecurityUtils;
 import com.yellow.common.constant.Constants;
+import com.yellow.common.exception.ExceptionCast;
 import com.yellow.common.util.RedisUtils;
 import com.yellow.common.util.SystemUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 
 /**
  * 认证授权切面
@@ -37,10 +33,7 @@ import java.util.Date;
 public class AuthAspect {
 
 	@Resource
-	private SysLoginLogMapper sysLoginLogMapper;
-
-    @Resource
-    private SysDetailLogMapper sysDetailLogMapper;
+	private SysLogService sysLogService;
 
 	@Resource
 	private RedisUtils redisUtils;
@@ -48,67 +41,60 @@ public class AuthAspect {
 	@Resource
 	private HttpServletRequest request;
 
-	@Pointcut("execution( * com.yellow.api.security.JwtAuthenticationLoginFilter.attemptAuthentication(..))")
+	@Pointcut("execution( * com.yellow.api.controller.AuthController.login(..))")
 	public void login() {}
 
-	@Pointcut("execution( * com.yellow.api.security.JwtAuthenticationLoginFilter.successfulAuthentication(..))")
-	public void loginSuccess() {}
-
-	@Pointcut("execution( * com.yellow.api.security.JwtAuthenticationLoginFilter.unsuccessfulAuthentication(..))")
-	public void loginFail() {}
-
-    @Pointcut("execution( * com.yellow.api.controller.AuthController.logout(..))")
-    public void logout() {};
+	@Pointcut("execution( * com.yellow.api.controller.AuthController.logout(..))")
+	public void logout() {}
 
     @Before("login()")
-	public void auth() {
+	public void loginCheck() {
+		// 风控机制校验
 		if (checkLoginError(SystemUtils.getIp(request))) {
-			LoginExceptionCast.cast(AuthCode.AUTH_LOGIN_ERROR_CONTROL);
+			ExceptionCast.cast(AuthCode.AUTH_LOGIN_ERROR_CONTROL);
 		}
 	}
 
 	/**
 	 * 记录登录日志
-	 * @AfterReturning：如果出现异常，该方法不会执行
 	 * @author Hao.
 	 * @date 2022/6/27 9:16
 	 * @return void
 	 */
-	@AfterReturning("loginSuccess()")
-	public void success() {
+	@AfterReturning("login()")
+	public void loginSuccess() {
 		// 登录成功，删除登录限制
 		deleteLoginErrorTimes(SystemUtils.getIp(request));
 
-		// 设置最后一次登录时间
-//			setLastLoginTime();
-
-		saveLog(SysLoginLog.builder()
+		sysLogService.saveLoginLog(SysLoginLog.builder()
 				.username(SecurityUtils.getCurrentUsername())
 				.status("登录" + Constants.OPERATE_STATUS_SUCCESS).build());
 	}
 
 	/**
 	 * 记录登录异常日志
-	 * @AfterReturning：如果出现异常，该方法不会执行
+	 * @param point
+	 * @param e
 	 * @return void
 	 * @author zhouhao
 	 * @date  2021/4/23 10:22
 	 */
-	@AfterReturning(value = "loginFail()", returning = "result")
-	public void logAfterThrowing(JoinPoint joinPoint, Object result) {
-		// 登录失败，风控次数+1
+	@AfterThrowing(pointcut = "login()", throwing = "e")
+	public void logonException(JoinPoint point, Throwable e) {
+
+		// 添加登录失败次数
 		addLoginErrorTimes(SystemUtils.getIp(request));
 
 		SysLoginLog log = SysLoginLog.builder()
-				.username(SecurityUtils.getCurrentUsername())
+				.username(JSON.parseObject(JSON.toJSONString(point.getArgs()[1]), LoginRequest.class).getUsername())
 				.status("登录" + Constants.OPERATE_STATUS_FAIL).build();
 
-		saveLog(log);
+		sysLogService.saveLoginLog(log);
 
-		sysDetailLogMapper.insert(SysDetailLog.builder()
+		sysLogService.saveDetailLog(SysDetailLog.builder()
 				.logId(log.getId())
 				.logType(Integer.parseInt(SysDetailLogCode.LOG_TYPE_1.k()))
-				.detail(JSON.toJSONString(result)).build());
+				.detail(SystemUtils.getStackTrace(e)).build());
 	}
 
 	/**
@@ -119,7 +105,7 @@ public class AuthAspect {
 	 */
 	@Before("logout()")
 	public void logoutLog() {
-		saveLog(SysLoginLog.builder()
+		sysLogService.saveLoginLog(SysLoginLog.builder()
 				.username(SecurityUtils.getCurrentUsername())
 				.status("登出" + Constants.OPERATE_STATUS_SUCCESS).build());
 	}
@@ -129,7 +115,7 @@ public class AuthAspect {
 	 *
 	 * @param ip
 	 */
-	private void addLoginErrorTimes(String ip) {
+	public void addLoginErrorTimes(String ip) {
 		String key = Constants.LOGIN_FAIL_IP + ip;
 		if (redisUtils.exists(key)) {
 			redisUtils.incrBy(key, 1L);
@@ -143,7 +129,7 @@ public class AuthAspect {
 	 *
 	 * @param ip
 	 */
-	private void deleteLoginErrorTimes(String ip) {
+	public void deleteLoginErrorTimes(String ip) {
 		String key = Constants.LOGIN_FAIL_IP + ip;
 		if (redisUtils.exists(key)) {
 			redisUtils.delete(key);
@@ -156,7 +142,7 @@ public class AuthAspect {
 	 *
 	 * @return
 	 */
-	private boolean checkLoginError(String ip) {
+	public boolean checkLoginError(String ip) {
 		boolean b = false;
 		String key = Constants.LOGIN_FAIL_IP + ip;
 		long max = 5L;
@@ -164,22 +150,5 @@ public class AuthAspect {
 			b = true;
 		}
 		return b;
-	}
-
-	/**
-	 * 保存登录日志
-	 *
-	 * @param result
-	 */
-	private void saveLog(SysLoginLog result) {
-		String ip = SystemUtils.getIp(request);
-
-		result.setIp(ip);
-		result.setAddress(SystemUtils.getAddress(ip));
-		result.setBrowser(SystemUtils.getBrowser(request));
-		result.setOs(SystemUtils.getOs(request));
-		result.setLoginTime(new Date());
-
-        sysLoginLogMapper.insert(result);
 	}
 }

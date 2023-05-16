@@ -1,0 +1,24 @@
+package ${package}.${moduleName}.entity.ext;
+
+import ${package}.${moduleName}.entity.${className};
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
+import lombok.*;
+
+/**
+ * ${comments}数据扩展模型
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @since ${datetime}
+ */
+@EqualsAndHashCode(callSuper = true)
+@Data
+@ApiModel(value = "${comments}数据扩展模型")
+public class ${className}Ext extends ${className} implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+}

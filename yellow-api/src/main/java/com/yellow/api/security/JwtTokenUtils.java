@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * JWT Token工具类
@@ -61,7 +62,7 @@ public class JwtTokenUtils implements Serializable {
         JwtInfo info = new JwtInfo();
         info.setUsername(username);
         // 默认有效期4小时
-        info.setInvalidTime(DateUtils.addDateByHour(new Date(), 4));
+        info.setInvalidTime(DateUtils.addDateBySecond(new Date(), SystemProperties.auth.getCookieMaxAge()));
         return generateToken(info);
     }
 
@@ -84,6 +85,9 @@ public class JwtTokenUtils implements Serializable {
     public static Boolean isTokenExpired(String token) {
         try {
             final JwtInfo info = getClaimsFromToken(token);
+            if (Objects.isNull(info)) {
+                return false;
+            }
             Date expiration = info.getInvalidTime();
             return expiration.before(new Date());
         } catch (Exception e) {

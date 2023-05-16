@@ -1,25 +1,27 @@
 package com.yellow.api.config;
 
-import com.alibaba.fastjson.JSON;
 import com.yellow.api.autoconfigure.SystemProperties;
-import com.yellow.api.security.JwtAuthenticationLoginFilter;
-import com.yellow.api.service.SysCaptchaService;
+import com.yellow.api.security.JwtAuthenticationTokenFilter;
+import com.yellow.api.service.SysLogService;
 import com.yellow.common.entity.response.CommonCode;
 import com.yellow.common.entity.response.ResponseResult;
-import com.yellow.common.util.RedisUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.header.Header;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,6 +29,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -43,49 +47,79 @@ import java.util.Collections;
 public class WebSecurityConfig {
 
     @Resource
+    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+
+    @Resource
     private UserDetailsService userDetailsService;
 
     @Resource
-    private SysCaptchaService sysCaptchaService;
+    private SysLogService sysLogService;
 
     @Resource
-    private RedisUtils redisUtils;
+    private DataSource dataSource;
 
     @Bean
-    @Order(1)
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.
-                // 跨域
-                cors().and().headers().addHeaderWriter(this.getResponseCors()).
-                // 禁用session
-                and().csrf().disable().
-                // 请求认证
-                authorizeRequests().
-                    // 匿名路径
-                    antMatchers(SystemProperties.auth.getAnon().toArray(new String[]{})).permitAll().
-                    // 所有请求都需认证
-                    anyRequest().authenticated().
-                and().addFilterAt(new JwtAuthenticationLoginFilter(authenticationManager(http), redisUtils, sysCaptchaService), UsernamePasswordAuthenticationFilter.class).
-                formLogin().loginProcessingUrl("/auth/login").
-                and().rememberMe().key("yellow").
-                // 异常处理
-                and().exceptionHandling().
-                    // 认证的异常处理
-                    authenticationEntryPoint((request, response, e) -> ResponseResult.output(response, CommonCode.UNAUTHENTICATED)).
-                    // 授权的异常处理
-                    accessDeniedHandler((request, response, e) -> ResponseResult.output(response, CommonCode.UNAUTHORISE)).
-                // token鉴权 过滤器
-                // 启用http 基础验证
-                and().httpBasic().and().build();
+    public PersistentTokenRepository persistentTokenRepository(){
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+
+        // 自动创建表,第一次执行会创建，以后要执行就要删除掉！
+//        jdbcTokenRepository.setCreateTableOnStartup(true);
+
+        return jdbcTokenRepository;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.
-                getSharedObject(AuthenticationManagerBuilder.class).
-                userDetailsService(userDetailsService).
-                passwordEncoder(passwordEncoder()).
-                and().build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.
+                // 跨域
+                cors().configurationSource(corsConfigurationSource()).and()
+                // 添加基本header
+                .headers().addHeaderWriter(getResponseCors()).and()
+                // 禁用session
+                .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+
+                // 禁用表单登录
+                .formLogin().disable()
+                // 禁用匿名登录
+                .anonymous().disable()
+                // 登录认证
+//                .rememberMe().tokenValiditySeconds(SystemProperties.auth.getCookieMaxAge()).tokenRepository(persistentTokenRepository()).and()
+
+                // 接口授权
+                .authorizeHttpRequests().
+                // 匿名路径
+                antMatchers(SystemProperties.auth.getAnon().toArray(new String[]{})).permitAll().
+                // 所有请求都需认证
+                anyRequest().authenticated().and()
+
+                // 异常处理
+                .exceptionHandling().
+                // 认证的异常处理
+                authenticationEntryPoint((request, response, e) -> {
+                    e.printStackTrace();
+                    ResponseResult.output(response, CommonCode.UNAUTHENTICATED);
+                }).
+                // 授权的异常处理
+                accessDeniedHandler((request, response, e) -> ResponseResult.output(response, CommonCode.UNAUTHORISE)).
+
+                and().httpBasic(Customizer.withDefaults());
+
+        //校验过滤器添加到过滤器链中
+        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    /**
+     * 获取AuthenticationManager（认证管理器），登录时认证使用
+     * @param authenticationConfiguration
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     // 采用bcrypt对密码进行编码
@@ -110,14 +144,13 @@ public class WebSecurityConfig {
         );
     }
 
-    // 跨域配置
     @Bean
-    protected CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Collections.singletonList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","HEAD", "OPTIONS"));
+        configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
-        configuration.addExposedHeader("Authorization");
+        configuration.setMaxAge(Duration.ofHours(1));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

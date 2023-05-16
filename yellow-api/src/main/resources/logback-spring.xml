@@ -45,6 +45,7 @@
     <logger name="org" level="INFO"/>
     <logger name="springfox.documentation" level="INFO"/>
     <logger name="io.lettuce.core" level="ERROR"/>
+    <logger name="org.springframework.security.authentication.AuthenticationCredentialsNotFoundException" level="TRACE"/>
 
     <springProfile name="dev, dmdev">
         <root level="DEBUG">

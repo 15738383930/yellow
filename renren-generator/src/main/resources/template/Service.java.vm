@@ -1,0 +1,17 @@
+package ${package}.${moduleName}.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import ${package}.${moduleName}.entity.${className};
+import ${package}.${moduleName}.entity.ext.${className}Ext;
+import ${package}.${moduleName}.entity.request.Query${className}Request;
+
+import com.yellow.common.entity.response.QueryResponseResult;
+
+import javax.annotation.Resource;
+
+public interface I${className}Service extends IService<${className}> {
+
+    QueryResponseResult<${className}Ext> pageList(int page, int size, Query${className}Request request);
+
+}
+

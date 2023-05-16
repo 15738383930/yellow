@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * jwt认证用户类
@@ -29,13 +31,18 @@ public class JwtUserDetails implements UserDetails {
 
     private String username;
 
+    @JsonIgnore
     private String password;
 
     private Integer id;
 
     private String name;
 
-    private List<String> codes;
+    @JsonIgnore
+    private Set<String> roles;
+
+    @JsonIgnore
+    private Set<String> codes;
 
     @Override
     public String getUsername() {
@@ -48,13 +55,18 @@ public class JwtUserDetails implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
+        if (CollectionUtils.isEmpty(codes)) {
+            return authorities;
+        }
         codes.forEach(o -> authorities.add(new SimpleGrantedAuthority(o)));
         return authorities;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }

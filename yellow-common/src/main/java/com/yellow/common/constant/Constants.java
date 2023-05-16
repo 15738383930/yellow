@@ -41,6 +41,15 @@ public class Constants {
     public static final String UTF8 = "UTF-8";
 
     /**
+     * 神！
+     */
+    public static final String GOD = "zhouhao";
+
+    public static final String DEFAULT_PASSWORD = "Yellow$123$Yellow";
+
+    public static final String ROLE_PREFIX = "ROLE_";
+
+    /**
      * 登录失败
      */
     public static final String LOGIN_FAIL_IP = "login_error:";

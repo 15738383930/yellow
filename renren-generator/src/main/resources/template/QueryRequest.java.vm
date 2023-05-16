@@ -1,0 +1,22 @@
+package ${package}.${moduleName}.entity.request;
+
+import com.yellow.common.entity.request.RequestData;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import lombok.*;
+
+/**
+ * 查询${comments}请求模型
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @since ${datetime}
+ */
+@Data
+@ApiModel(value = "查询${comments}请求模型")
+@EqualsAndHashCode(callSuper = true)
+public class Query${className}Request extends RequestData {
+
+}

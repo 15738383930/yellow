@@ -66,6 +66,8 @@ yellow:
       - /doc.html
 
       - /druid/**
+    # cookie存活时间 默认4小时 目前用途：token
+    cookie-max-age: 14400
   key:
     password: zhoukeystore
     secret: zhouhao

@@ -1,5 +1,6 @@
 package com.yellow.api.model.code;
 
+import com.stars.datachange.model.code.BaseCode;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -8,20 +9,20 @@ import org.apache.commons.lang3.StringUtils;
  * @author zhouhao
  * @date  2021/4/2 13:59
  */
-public enum SysMenuCode {
+public enum SysMenuCode implements BaseCode {
 
     /**
      * 菜单层级
      */
-    MENU_LEVEL_1("menuLevel", "1", "目录"),
-    MENU_LEVEL_2("menuLevel", "2", "菜单"),
-    MENU_LEVEL_3("menuLevel", "3", "按钮"),
+    MENU_LEVEL_0("menuLevel", "0", "目录"),
+    MENU_LEVEL_1("menuLevel", "1", "菜单"),
+    MENU_LEVEL_2("menuLevel", "2", "按钮"),
 
     /**
-     * 菜单状态
+     * 是否隐藏
      */
-    IS_HIDDEN_0("isHidden", "0", "是"),
-    IS_HIDDEN_1("isHidden", "1", "否"),
+    IS_HIDDEN_1("isHidden", "1", "是"),
+    IS_HIDDEN_0("isHidden", "0", "否"),
 
     /**
      * 是否删除
@@ -39,27 +40,18 @@ public enum SysMenuCode {
         this.v = v;
     }
 
-    public String getT() {
+    @Override
+    public String t() {
         return t;
     }
 
-    public String getK() {
+    @Override
+    public String k() {
         return k;
     }
 
-    public String getV() {
+    @Override
+    public String v() {
         return v;
-    }
-
-    public static String getValue(String t, String k) {
-        if (StringUtils.isNotEmpty(k)) {
-            SysMenuCode[] values = SysMenuCode.values();
-            for (SysMenuCode code : values) {
-                if (code.getT().equals(t) && code.getK().equals(k)) {
-                    return code.getV();
-                }
-            }
-        }
-        return k;
     }
 }

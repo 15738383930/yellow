@@ -19,7 +19,7 @@ public enum CommonCode implements ResultCode {
     INVALID_PARAM(false,10003,"非法参数！"),
     FILE_SIZE_EXCEEDS_LIMIT(false,10004,"文件上传的大小超过限制！"),
     MISSING_REQUEST_PARAMETER(false,10005,"缺少请求参数！"),
-    VERIFICATION_CODE_ERROR(false,10006,"验证码错误！"),
+    VERIFICATION_CODE_ERROR(false,10006,"验证码错误！（不存在、错误或过期）"),
     VERIFICATION_CODE_EXPIRED(false,10007,"验证码过期！"),
     REQUEST_METHOD_ERROR(false,10008,"不支持的Http请求方法！（检查你的请求方法：fail、post等）"),
     DUPLICATE_TOKEN(false,10009,"token重复！"),
@@ -38,6 +38,7 @@ public enum CommonCode implements ResultCode {
 
     PUBLIC_KEY_INVALID(false,10020,"错误/无效的公钥！"),
 
+    GOD_UNSHAKABLE(false,19999,"神不可动摇！"),
     SERVER_ERROR(false,99999,"抱歉，系统繁忙，请稍后重试！"),
     ;
 

@@ -2,6 +2,8 @@ package com.yellow.common.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yellow.common.util.DateUtils;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -24,6 +26,7 @@ public class BaseEntity implements Serializable {
     @ApiModelProperty(value = "创建人")
     private String createBy;
 
+    @JsonFormat(pattern = DateUtils.DATE_PATTERN)
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建时间")
     private Date createTime;

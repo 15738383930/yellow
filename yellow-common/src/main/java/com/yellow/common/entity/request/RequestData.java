@@ -1,5 +1,6 @@
 package com.yellow.common.entity.request;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -13,4 +14,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class RequestData {
+
+    @ApiModelProperty("创建人账号")
+    private String createBy;
 }
