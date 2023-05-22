@@ -1,13 +1,11 @@
-**项目说明**
+# yellow
 - yellow是一个开箱即用，前后端分离的Java敏捷开发平台，能快速开发项目并交付，可扩展、可维护程度高。
 - 支持MySQL、Oracle、SQL Server、PostgreSQL等主流数据库
 - 前端地址：https://gitee.com/xuan_zheng/yellow-web
 - 代码生成器：https://gitee.com/xuan_zheng/yellow/tree/master/renren-generator
-
 <br>
 
-
-**具有如下特点**
+#### 特点
 - 友好的代码结构及注释，便于阅读及二次开发
 - 实现前后端分离，通过token进行数据交互，前端再也不用关注后端技术
 - 灵活的权限控制，可控制到页面或按钮，满足绝大部分的权限需求
@@ -18,7 +16,7 @@
 - 引入swagger文档支持，方便编写API接口文档
   <br>
 
-**项目结构**
+#### 项目结构
 ```
 yellow
 ├─yellow-common 公共模块
@@ -48,13 +46,13 @@ yellow
 ```
 <br> 
 
-**如何交流、反馈、参与贡献？**
+#### 如何交流、反馈、参与贡献？
 - Git仓库：https://gitee.com/xuan_zheng/yellow
 - QQ群：142713860
 - 如需关注项目最新动态，请Watch、Star项目，同时也是对项目最好的支持
 <br>
 
-**技术选型：**
+#### 技术选型
 - 核心框架：Spring Boot 2.7
 - 安全框架：Spring Security 5.7
 - 视图框架：Spring MVC 5.3
@@ -65,7 +63,7 @@ yellow
 - 页面交互：Vue2.x
   <br>
 
-**后端部署**
+#### 后端部署
 - 通过git下载源码
 - idea、eclipse需安装lombok插件，不然会提示找不到entity的get set方法
 - 创建数据库yellow，数据库编码为UTF-8
@@ -75,7 +73,7 @@ yellow
 - 接口文档地址：http://localhost:11100/yellow/doc.html
 <br> 
 
-**前端部署**
+#### 前端部署
 - 本项目是前后端分离的，还需要部署前端，才能运行起来
 - 前端下载地址：https://gitee.com/xuan_zheng/yellow-web
 - npm install
@@ -83,10 +81,10 @@ yellow
 - 前端部署完毕，就可以访问项目了，账号：zhouhao，密码：Yellow$123$Yellow
  <br>
 
-**效果图** <br>
+#### 效果图<br>
 [点击查看](https://gitee.com/xuan_zheng/yellow-web/blob/master/README.md)
 <br>
 
-**版本更新说明** <br>
+#### 版本更新说明
 - v1.0：完成了基本的系统管理大模块，基于Spring Security的认证授权功能等；
 <br>
