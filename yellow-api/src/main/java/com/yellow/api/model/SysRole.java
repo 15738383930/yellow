@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.yellow.common.constant.Constants;
 import com.yellow.common.entity.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -41,6 +42,9 @@ public class SysRole extends BaseEntity {
     * 备注
     */
     private String remark;
+
+    @ApiModelProperty(value = "是否删除 1-是 0-否")
+    private Integer isDel;
 
     public void addPrefix() {
         removePrefix();

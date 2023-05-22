@@ -21,6 +21,8 @@ import com.yellow.common.entity.response.QueryResponseResult;
 import com.yellow.common.entity.response.ResponseResult;
 import com.yellow.common.exception.ExceptionCast;
 import com.yellow.common.util.StringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,11 +32,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 系统菜单
- *
- * @author Mark sunlightcs@gmail.com
- */
+@Api(tags = "系统菜单")
 @RestController
 @RequestMapping("/sys/menu")
 public class SysMenuController extends BaseController {
@@ -42,23 +40,19 @@ public class SysMenuController extends BaseController {
 	@Resource
 	private SysMenuService sysMenuService;
 
-	/**
-	 * 导航菜单
-	 */
+	@ApiOperation("导航菜单")
 	@GetMapping("/nav")
 	public NavigationResult nav(){
 		List<SysMenuExt> menuList = sysMenuService.getUserMenuList();
 		return NavigationResult.success(menuList, SecurityUtils.getCurrentUser().getCodes());
 	}
 
-	/**
-	 * 所有菜单列表
-	 */
+	@ApiOperation("所有菜单列表")
 	@GetMapping("/list")
 	@PreAuthorize("hasAuthority('sys:menu:list')")
 	public QueryResponseResult<SysMenuExt> list(){
 		List<SysMenuExt> result = new ArrayList<>();
-		List<SysMenu> menuList = sysMenuService.list();
+		List<SysMenu> menuList = sysMenuService.list(Wrappers.lambdaQuery(SysMenu.class).orderByAsc(SysMenu::getSort));
 		for(SysMenu sysMenuEntity : menuList){
 			SysMenuExt o = new SysMenuExt();
 			BeanUtils.copyProperties(sysMenuEntity, o);
@@ -72,9 +66,7 @@ public class SysMenuController extends BaseController {
 		return QueryResponseResult.success(result, result.size());
 	}
 
-	/**
-	 * 选择菜单(添加、修改菜单)
-	 */
+	@ApiOperation("选择菜单(添加、修改菜单)")
 	@GetMapping("/select")
 	@PreAuthorize("hasAuthority('sys:menu:select')")
 	public QueryResponseResult<SysMenu> select(){
@@ -92,18 +84,14 @@ public class SysMenuController extends BaseController {
 		return QueryResponseResult.success(menuList, menuList.size());
 	}
 
-	/**
-	 * 菜单信息
-	 */
+	@ApiOperation("菜单信息")
 	@GetMapping("/info/{menuId}")
 	@PreAuthorize("hasAuthority('sys:menu:info')")
 	public ObjectResponseResult<SysMenu> info(@PathVariable("menuId") Integer menuId){
 		return ObjectResponseResult.success(sysMenuService.getById(menuId));
 	}
 
-	/**
-	 * 保存
-	 */
+	@ApiOperation("保存")
 	@PostMapping("/save")
 	@PreAuthorize("hasAuthority('sys:menu:save')")
 	public ResponseResult save(@Valid @RequestBody SysMenu menu){
@@ -112,7 +100,7 @@ public class SysMenuController extends BaseController {
 
 		// 唯一性校验
 		final int count = sysMenuService.count(Wrappers.lambdaQuery(SysMenu.class).eq(SysMenu::getMenuName, menu.getMenuName())
-				.eq(SysMenu::getType, menu.getType()));
+				.eq(SysMenu::getType, menu.getType()).eq(SysMenu::getParentId, menu.getParentId()));
 		if (count > 0) {
 			ExceptionCast.cast(SysCode.MENU_ALREADY_EXISTS);
 		}
@@ -123,9 +111,7 @@ public class SysMenuController extends BaseController {
 		return ResponseResult.success();
 	}
 
-	/**
-	 * 修改
-	 */
+	@ApiOperation("修改")
 	@PostMapping("/update/{menuId}")
 	@PreAuthorize("hasAuthority('sys:menu:update')")
 	public ResponseResult update(@PathVariable("menuId") Integer menuId, @Valid @RequestBody SysMenu menu){
@@ -137,9 +123,7 @@ public class SysMenuController extends BaseController {
 		return ResponseResult.success();
 	}
 
-	/**
-	 * 删除
-	 */
+	@ApiOperation("删除")
 	@PostMapping("/delete/{menuId}")
 	@PreAuthorize("hasAuthority('sys:menu:delete')")
 	public ResponseResult delete(@PathVariable("menuId") Integer menuId){

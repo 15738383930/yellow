@@ -29,13 +29,13 @@ import com.yellow.common.entity.code.RoleCode;
 import com.yellow.common.entity.response.CommonCode;
 import com.yellow.common.entity.response.QueryResponseResult;
 import com.yellow.common.exception.ExceptionCast;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -106,6 +106,18 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
 		request.getRoles().removeIf(o -> o <= 0);
 		request.getRoles().forEach(o -> sysUserRoleMapper.insert(SysUserRole.builder().userId(id).roleId(o).build()));
 
+	}
+
+	/**
+	 * 设置用户的最后一次登录时间
+	 * @return void
+	 * @author zhouhao
+	 * @date  2021/4/1 15:50
+	 */
+	public void setLastLoginTime(){
+		SysUser user = baseMapper.selectById(SecurityUtils.getCurrentUser().getId());
+		user.setLastLoginTime(new Date());
+		baseMapper.updateById(user);
 	}
 	
 	/**

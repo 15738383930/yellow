@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="${package}.${moduleName}.mapper.${className}Mapper">
-
-	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap id="${classname}Map" type="${package}.${moduleName}.entity.${className}">
-#foreach($column in $columns)
-        <result property="${column.attrname}" column="${column.columnName}"/>
-#end
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        #foreach($column in $columns)
-            #if(${foreach.index} != 0) , #end ${column.columnName}
-        #end
-    </sql>
-
+<mapper namespace="${package}.api.mapper.${className}Mapper">
     <select id="findList" resultType="${className}Ext">
         select
             #foreach($column in $columns)
-                #if(${foreach.index} != 0) , #end ${column.columnName}
+                ${column.columnName}#if(${foreach.hasNext}),#end
+                #if(${foreach.index} != -1)
+
+                #end
             #end
          from ${tableName}
         <where>
+            <!--<if test="@com.yellow.common.util.StringUtils@isNotEmpty(str)">
+              and field = #{str}
+            </if>-->
+
+            <!--<if test="@java.util.Objects@nonNull(int)">
+                and field = #{int}
+            </if>-->
+
+            <!--<if test="!@org.springframework.util.CollectionUtils@isEmpty(list)">
+                and field in
+                <foreach collection="list" item="o" open="(" separator="," close=")">
+                    #{o}
+                </foreach>
+            </if>-->
         </where>
     </select>
 

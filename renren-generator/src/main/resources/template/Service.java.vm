@@ -1,9 +1,9 @@
-package ${package}.${moduleName}.service;
+package ${package}.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import ${package}.${moduleName}.entity.${className};
-import ${package}.${moduleName}.entity.ext.${className}Ext;
-import ${package}.${moduleName}.entity.request.Query${className}Request;
+import ${package}.api.model.${className};
+import ${package}.api.model.ext.${className}Ext;
+import ${package}.api.model.request.Query${className}Request;
 
 import com.yellow.common.entity.response.QueryResponseResult;
 

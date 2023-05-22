@@ -25,22 +25,6 @@ spring:
       test-while-idle: true #建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
       time-between-eviction-runs-millis: 60000 #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
       min-evictable-idle-time-millis: 300000  #一个连接在池中最小生存的时间，单位是毫秒
-      #StatViewServlet配置。（因为暴露的监控信息比较敏感，支持密码加密和访问ip限定）
-      stat-view-servlet:
-        enabled: true
-        url-pattern: /druid/*
-        #可以增加访问账号密码【去掉注释就可以】
-        #login-username: admin
-        #login-password: 1323!Q@#EMSD%$^
-      filter:
-        stat:
-          log-slow-sql: true
-          slow-sql-millis: 1000
-          merge-sql: true
-        wall:
-          config:
-            multi-statement-allow: true
-
   redis:
     #数据库索引
     database: 1

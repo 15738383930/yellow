@@ -1,6 +1,6 @@
-package ${package}.${moduleName}.entity.ext;
+package ${package}.api.model.ext;
 
-import ${package}.${moduleName}.entity.${className};
+import ${package}.api.model.${className};
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -18,7 +18,6 @@
     <modules>
         <module>yellow-common</module>
         <module>yellow-api</module>
-        <module>renren-fast</module>
     </modules>
 
     <properties>

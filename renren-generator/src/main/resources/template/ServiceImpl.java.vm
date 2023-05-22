@@ -1,32 +1,36 @@
-package ${package}.${moduleName}.service.impl;
+package ${package}.api.service.impl;
 
 
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import ${package}.${moduleName}.service.I${className}Service;
-
-import ${package}.${moduleName}.mapper.${className}Mapper;
-import ${package}.${moduleName}.entity.${className};
-import ${package}.${moduleName}.entity.ext.${className}Ext;
-import ${package}.${moduleName}.entity.request.Query${className}Request;
+import ${package}.api.mapper.${className}Mapper;
+import ${package}.api.model.${className};
+import ${package}.api.model.ext.${className}Ext;
+import ${package}.api.model.request.Query${className}Request;
 
 import com.yellow.common.constant.Constants;
 import com.yellow.common.entity.response.QueryResponseResult;
+import com.yellow.common.entity.response.CommonCode;
+import com.yellow.common.exception.ExceptionCast;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageSerializable;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
+import java.util.Objects;
+import java.util.List;
 
 
 @Service
-public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${className}> implements I${className}Service {
+public class ${className}Service extends ServiceImpl<${className}Mapper, ${className}> {
 
     @Resource
     private ${className}Mapper ${classname}Mapper;
 
-    @Override
     public QueryResponseResult<${className}Ext> pageList(int page, int size, Query${className}Request request) {
         // 加载分页组件
         PageHelper.startPage(Math.max(page, 1), Math.min((size >= 1 ? size : Constants.PAGE_SIZE_DEFAULT), Constants.PAGE_SIZE_MAX));
@@ -34,6 +38,49 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${c
         PageSerializable<${className}Ext> pageList = new PageSerializable<>(${classname}Mapper.findList(request));
 
         return QueryResponseResult.success(pageList.getList(), pageList.getTotal());
+    }
+
+    public ${className}Ext findById(${pk.attrType} ${pk.attrname}) {
+        final ${className} one = ${classname}Mapper.selectById(${pk.attrname});
+        // 非法参数校验（code可自定义）
+        ExceptionCast.cast(Objects.isNull(one), CommonCode.INVALID_PARAM);
+
+        // 处理业务逻辑
+        ${className}Ext result = new ${className}Ext();
+        BeanUtils.copyProperties(one, result);
+
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void save(${className}Ext request) {
+        // 唯一性校验
+
+        // 添加
+        baseMapper.insert(request);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void update(int id, ${className}Ext request) {
+        // 唯一性校验（根据实际需求）
+        final ${className} one = getById(id);
+        if (Objects.isNull(one)) {
+            // ExceptionCast.cast(XxxCode.XXX);
+        }
+
+        // 修改 (安全起见，可根据页面上能够修改的属性，逐个赋值)
+        // one.setXxx(request.getXxx());
+        // ...
+
+        this.updateById(one);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBatch(List<${pk.attrType}> ${pk.attrname}s) {
+        // 可进行一些逻辑处理
+
+        // 批量删除
+        this.removeByIds(${pk.attrname}s);
     }
 
 }

@@ -84,17 +84,15 @@
       getDataList () {
         this.dataListLoading = true
         #[[this.$http({]]#
-          #[[url: this.$http.adornUrl]]#('/${moduleName}/${pathName}/list'),
+          #[[url: this.$http.adornUrl]]#(`/${moduleName}/${pathName}/page/list/${this.pageIndex}/${this.pageSize}`),
           method: 'get',
           #[[params: this.$http.adornParams({]]#
-            'page': this.pageIndex,
-            'limit': this.pageSize,
             'key': this.dataForm.key
           })
         }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+          if (data && data.success) {
+            this.dataList = data.queryResult.list
+            this.totalPage = data.queryResult.total
           } else {
             this.dataList = []
             this.totalPage = 0
@@ -135,11 +133,11 @@
           type: 'warning'
         }).then(() => {
           #[[this.$http({]]#
-            url: #[[this.$http.adornUrl]]#('/${moduleName}/${pathName}/delete'),
-            method: 'post',
+            url: #[[this.$http.adornUrl]]#('/${moduleName}/${pathName}'),
+                  method: 'delete',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
-            if (data && data.code === 0) {
+            if (data && data.success) {
               #[[this.$message({]]#
                 message: '操作成功',
                 type: 'success',
@@ -149,7 +147,7 @@
                 }
               })
             } else {
-              #[[this.$message.error(data.msg)]]#
+              #[[this.$message.error(data.message)]]#
             }
           })
         })

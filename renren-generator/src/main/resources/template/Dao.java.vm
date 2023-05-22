@@ -1,10 +1,10 @@
-package ${package}.${moduleName}.mapper;
+package ${package}.api.mapper;
 
-import ${package}.${moduleName}.entity.${className};
-import ${package}.${moduleName}.entity.ext.${className}Ext;
+import ${package}.api.model.${className};
+import ${package}.api.model.ext.${className}Ext;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import ${package}.${moduleName}.entity.request.Query${className}Request;
+import ${package}.api.model.request.Query${className}Request;
 
 import java.util.List;
 

@@ -23,14 +23,6 @@ import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-/**
- * <p>
- * 用户表 控制器
- * </p>
- *
- * @author zhangz145
- * @since 2020-05-18
- */
 @Slf4j
 @RestController
 @Api(tags = "鉴权中心")
@@ -74,6 +66,7 @@ public class AuthController {
     }
 
     @GetMapping("/userinfo")
+    @ApiOperation("当前用户信息")
     public ObjectResponseResult<JwtUserDetails> info(){
         return ObjectResponseResult.success(SecurityUtils.getCurrentUser());
     }

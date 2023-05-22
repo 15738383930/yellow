@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api("用户管理")
+@Api(tags = "用户管理")
 @RestController
 @RequestMapping("/sys/user")
 public class SysUserController extends BaseController {
@@ -55,6 +55,7 @@ public class SysUserController extends BaseController {
     /**
      * 用户信息
      */
+    @ApiOperation("用户信息")
     @GetMapping("/info/{userId}")
     @PreAuthorize("hasAuthority('sys:user:info')")
     public ObjectResponseResult<SysUserExt> info(@PathVariable("userId") Integer userId){
@@ -73,6 +74,7 @@ public class SysUserController extends BaseController {
     /**
      * 保存用户
      */
+    @ApiOperation("保存用户")
     @PostMapping("/save")
     @PreAuthorize("hasAuthority('sys:user:save')")
     public ResponseResult save(@Validated(AddGroup.class) @RequestBody SysUserExt user){
@@ -99,6 +101,7 @@ public class SysUserController extends BaseController {
     /**
      * 修改用户
      */
+    @ApiOperation("修改用户")
     @PostMapping("/update/{id}")
     @PreAuthorize("hasAuthority('sys:user:update')")
     public ResponseResult update(@PathVariable("id") Integer id, @Validated(EditGroup.class) @RequestBody SysUserExt user){
@@ -109,6 +112,7 @@ public class SysUserController extends BaseController {
     /**
      * 删除用户
      */
+    @ApiOperation("删除用户")
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority('sys:user:delete')")
     public ResponseResult delete(@RequestBody Integer[] userIds){

@@ -1,4 +1,4 @@
-package ${package}.${moduleName}.entity;
+package ${package}.api.entity;
 
 
 #if(${hasBigDecimal})

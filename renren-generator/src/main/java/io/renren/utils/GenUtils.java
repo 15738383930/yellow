@@ -42,7 +42,7 @@ public class GenUtils {
 
         templates.add("template/menu.sql.vm");
 
-        templates.add("template/Service.java.vm");
+//        templates.add("template/Service.java.vm");
         templates.add("template/ServiceImpl.java.vm");
         templates.add("template/Controller.java.vm");
         templates.add("template/Dao.java.vm");
@@ -302,31 +302,32 @@ public class GenUtils {
     public static String getFileName(String template, String className, String packageName, String moduleName) {
         String packagePath = "main" + File.separator + "java" + File.separator;
         if (StringUtils.isNotBlank(packageName)) {
-            packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
+            packagePath += packageName.replace(".", File.separator) + File.separator + "api" + File.separator;
         }
         if (template.contains("MongoChildrenEntity.java.vm")) {
-            return packagePath + "entity" + File.separator + "inner" + File.separator + currentTableName+ File.separator + splitInnerName(className)+ "InnerEntity.java";
+            return packagePath + "model" + File.separator + "inner" + File.separator + currentTableName+ File.separator + splitInnerName(className)+ "InnerEntity.java";
         }
         if (template.contains("Entity.java.vm") || template.contains("MongoEntity.java.vm")) {
-            return packagePath + "entity" + File.separator + className + ".java";
+            return packagePath + "model" + File.separator + className + ".java";
         }
         if (template.contains("EntityExt.java.vm")) {
-            return packagePath + "entity" + File.separator + "ext" + File.separator + className + "Ext.java";
+            return packagePath + "model" + File.separator + "ext" + File.separator + className + "Ext.java";
         }
         if (template.contains("QueryRequest.java.vm")) {
-            return packagePath + "entity" + File.separator + "request" + File.separator + "Query" + className + "Request.java";
+            return packagePath + "model" + File.separator + "request" + File.separator + "Query" + className + "Request.java";
         }
 
         if (template.contains("Dao.java.vm")) {
-            return packagePath + "dao" + File.separator + className + "Mapper.java";
+            return packagePath + "mapper" + File.separator + className + "Mapper.java";
         }
 
-        if (template.contains("Service.java.vm")) {
+        /*if (template.contains("Service.java.vm")) {
             return packagePath + "service" + File.separator + "I" + className + "Service.java";
-        }
+        }*/
 
         if (template.contains("ServiceImpl.java.vm")) {
-            return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
+//            return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
+            return packagePath + "service" + File.separator + className + "Service.java";
         }
 
         if (template.contains("Controller.java.vm")) {

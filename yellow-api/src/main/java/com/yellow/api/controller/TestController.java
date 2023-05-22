@@ -1,12 +1,18 @@
 package com.yellow.api.controller;
 
+import com.stars.datachange.utils.DataChangeUtils;
+import com.yellow.api.model.Test;
+import com.yellow.common.entity.response.ObjectResponseResult;
 import com.yellow.common.entity.response.ResponseResult;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.RsaVerifier;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * @author zhangz145
  * @since 2020-05-18
  */
+@Api(tags = "测试测试")
 @Slf4j
 @RestController
 @RequestMapping("/test")
@@ -34,5 +41,16 @@ public class TestController {
         String claims = jwt.getClaims();
         System.out.println(claims);
         return ResponseResult.success();
+    }
+
+    @GetMapping("/test")
+    public ObjectResponseResult test() {
+        Test t = new Test();
+        t.setName("静静");
+        t.setType(2);
+        t.setFavoriteFood("1,3,5");
+        t.setTouristPlace(6);
+        DataChangeUtils.dataChangeToBean(t);
+        return ObjectResponseResult.success(t);
     }
 }

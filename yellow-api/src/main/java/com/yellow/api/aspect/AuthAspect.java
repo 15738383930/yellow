@@ -2,11 +2,12 @@ package com.yellow.api.aspect;
 
 import com.alibaba.fastjson.JSON;
 import com.yellow.api.model.SysDetailLog;
-import com.yellow.api.model.SysLoginLog;
+import com.yellow.api.model.LoginLog;
 import com.yellow.api.model.code.SysDetailLogCode;
 import com.yellow.api.model.request.LoginRequest;
 import com.yellow.api.model.response.AuthCode;
 import com.yellow.api.service.SysLogService;
+import com.yellow.api.service.SysUserService;
 import com.yellow.api.util.SecurityUtils;
 import com.yellow.common.constant.Constants;
 import com.yellow.common.exception.ExceptionCast;
@@ -31,6 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class AuthAspect {
+
+	@Resource
+	private SysUserService sysUserService;
 
 	@Resource
 	private SysLogService sysLogService;
@@ -66,7 +70,9 @@ public class AuthAspect {
 		// 登录成功，删除登录限制
 		deleteLoginErrorTimes(SystemUtils.getIp(request));
 
-		sysLogService.saveLoginLog(SysLoginLog.builder()
+		sysUserService.setLastLoginTime();
+
+		sysLogService.saveLoginLog(LoginLog.builder()
 				.username(SecurityUtils.getCurrentUsername())
 				.status("登录" + Constants.OPERATE_STATUS_SUCCESS).build());
 	}
@@ -85,7 +91,7 @@ public class AuthAspect {
 		// 添加登录失败次数
 		addLoginErrorTimes(SystemUtils.getIp(request));
 
-		SysLoginLog log = SysLoginLog.builder()
+		LoginLog log = LoginLog.builder()
 				.username(JSON.parseObject(JSON.toJSONString(point.getArgs()[1]), LoginRequest.class).getUsername())
 				.status("登录" + Constants.OPERATE_STATUS_FAIL).build();
 
@@ -105,7 +111,7 @@ public class AuthAspect {
 	 */
 	@Before("logout()")
 	public void logoutLog() {
-		sysLogService.saveLoginLog(SysLoginLog.builder()
+		sysLogService.saveLoginLog(LoginLog.builder()
 				.username(SecurityUtils.getCurrentUsername())
 				.status("登出" + Constants.OPERATE_STATUS_SUCCESS).build());
 	}

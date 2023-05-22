@@ -75,7 +75,7 @@ public class WebSecurityConfig {
                 // 跨域
                 cors().configurationSource(corsConfigurationSource()).and()
                 // 添加基本header
-                .headers().addHeaderWriter(getResponseCors()).and()
+                .headers().addHeaderWriter(getResponseCors()).frameOptions().disable().and()
                 // 禁用session
                 .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
@@ -84,7 +84,7 @@ public class WebSecurityConfig {
                 // 禁用匿名登录
                 .anonymous().disable()
                 // 登录认证
-//                .rememberMe().tokenValiditySeconds(SystemProperties.auth.getCookieMaxAge()).tokenRepository(persistentTokenRepository()).and()
+                .rememberMe().tokenRepository(persistentTokenRepository()).and()
 
                 // 接口授权
                 .authorizeHttpRequests().
@@ -96,16 +96,13 @@ public class WebSecurityConfig {
                 // 异常处理
                 .exceptionHandling().
                 // 认证的异常处理
-                authenticationEntryPoint((request, response, e) -> {
-                    e.printStackTrace();
-                    ResponseResult.output(response, CommonCode.UNAUTHENTICATED);
-                }).
+                authenticationEntryPoint((request, response, e) -> ResponseResult.output(response, CommonCode.UNAUTHENTICATED)).
                 // 授权的异常处理
                 accessDeniedHandler((request, response, e) -> ResponseResult.output(response, CommonCode.UNAUTHORISE)).
 
                 and().httpBasic(Customizer.withDefaults());
 
-        //校验过滤器添加到过滤器链中
+        // 授权过滤器添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -138,6 +135,7 @@ public class WebSecurityConfig {
         return new StaticHeadersWriter(Arrays.asList(
                 //支持所有源的访问
                 new Header("Access-control-Allow-Origin","*"),
+                new Header("X-Frame-Options","ALLOWALL"),
                 //使ajax请求能够取到header中的jwt token信息
                 new Header("Access-Control-Expose-Headers","Authorization"),
                 new Header("Content-Type","application/json; charset=utf-8"))

@@ -1,4 +1,4 @@
-package ${package}.${moduleName}.controller;
+package ${package}.api.controller;
 
 import java.util.Arrays;
 
@@ -7,86 +7,73 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-import ${package}.${moduleName}.entity.${className};
-import ${package}.${moduleName}.entity.ext.${className}Ext;
-import ${package}.${moduleName}.service.I${className}Service;
+import ${package}.api.model.ext.${className}Ext;
 
-import ${package}.${moduleName}.entity.request.Query${className}Request;
+import ${package}.api.model.request.Query${className}Request;
+
+import ${package}.api.service.${className}Service;
 
 import com.yellow.common.entity.response.ResponseResult;
 import com.yellow.common.entity.response.QueryResponseResult;
 import com.yellow.common.entity.response.ObjectResponseResult;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import javax.validation.Valid;
 import javax.annotation.Resource;
 
 /**
- * ${comments}控制器
+ * ${comments}
  *
  * @author ${author}
  * @email ${email}
  * @since ${datetime}
  */
-@Api(tags = "${comments}控制器")
+@Api(tags = "${comments}")
 @RestController
-@RequestMapping("/api/${pathName}")
+@RequestMapping("/${moduleName}/${pathName}")
 public class ${className}Controller {
 
     @Resource
-    private I${className}Service i${classname}Service;
+    private ${className}Service ${classname}Service;
 
-    /**
-     * 列表
-     */
-    @ApiOperation("列表")
-    @PostMapping("/page/list/{page}/{size}")
-    // @RequiresPermissions("${moduleName}:${pathName}:list")
-    public QueryResponseResult<${className}Ext> pageList(@PathVariable("page") int page, @PathVariable("size") int size, @RequestBody Query${className}Request request){
-        return i${classname}Service.pageList(page, size, request);
+    @ApiOperation("分页查询列表数据")
+    @GetMapping("/page/list/{page}/{size}")
+    @PreAuthorize("hasAuthority('${moduleName}:${pathName}:list')")
+    public QueryResponseResult<${className}Ext> pageList(@PathVariable("page") int page, @PathVariable("size") int size, Query${className}Request request){
+        return ${classname}Service.pageList(page, size, request);
     }
 
-
-    /**
-     * 信息
-     */
     @ApiOperation("信息")
-    @GetMapping("/info/{${pk.attrname}}")
-    // @RequiresPermissions("${moduleName}:${pathName}:info")
-    public ObjectResponseResult<${className}> info(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname}){
-        return ObjectResponseResult.success(i${classname}Service.getById(${pk.attrname}));
+    @GetMapping("{${pk.attrname}}")
+    @PreAuthorize("hasAuthority('${moduleName}:${pathName}:info')")
+    public ObjectResponseResult<${className}Ext> info(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname}){
+        return ObjectResponseResult.success(${classname}Service.findById(${pk.attrname}));
     }
 
-    /**
-     * 保存
-     */
     @ApiOperation("保存")
-    @PostMapping("/save")
-    // @RequiresPermissions("${moduleName}:${pathName}:save")
-    public ResponseResult save(@RequestBody ${className} ${classname}){
-		i${classname}Service.save(${classname});
+    @PostMapping
+    @PreAuthorize("hasAuthority('${moduleName}:${pathName}:save')")
+    public ResponseResult save(@Valid @RequestBody ${className}Ext request){
+		${classname}Service.save(request);
 
         return ResponseResult.success();
     }
 
-    /**
-     * 修改
-     */
     @ApiOperation("修改")
-    @PostMapping("/update")
-    // @RequiresPermissions("${moduleName}:${pathName}:update")
-    public ResponseResult update(@RequestBody ${className} ${classname}){
-		i${classname}Service.updateById(${classname});
+    @PutMapping("{${pk.attrname}}")
+    @PreAuthorize("hasAuthority('${moduleName}:${pathName}:update')")
+    public ResponseResult update(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname}, @Valid @RequestBody ${className}Ext request){
+		${classname}Service.update(${pk.attrname}, request);
 
         return ResponseResult.success();
     }
 
-    /**
-     * 删除
-     */
     @ApiOperation("删除")
-    @PostMapping("/delete")
-    // @RequiresPermissions("${moduleName}:${pathName}:delete")
+    @DeleteMapping
+    @PreAuthorize("hasAuthority('${moduleName}:${pathName}:delete')")
     public ResponseResult delete(@RequestBody ${pk.attrType}[] ${pk.attrname}s){
-		i${classname}Service.removeByIds(Arrays.asList(${pk.attrname}s));
+		${classname}Service.deleteBatch(Arrays.asList(${pk.attrname}s));
 
         return ResponseResult.success();
     }

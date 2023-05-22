@@ -4,4 +4,23 @@
   <delete id="deleteOperateLog" parameterType="java.lang.Integer">
     delete from sys_operate_log where operate_time &lt; DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
   </delete>
+
+  <select id="findList" resultType="SysOperateLog">
+    select
+      id,
+      operate_event,
+      request_method,
+      operate_name,
+      operate_time,
+      method_name,
+      operate_status,
+      time
+    from sys_operate_log
+    <where>
+      <if test="@com.yellow.common.util.StringUtils@isNotEmpty(key)">
+        and (operate_name = #{key} or operate_event like '${key}%')
+      </if>
+    </where>
+    order by operate_time desc
+  </select>
 </mapper>

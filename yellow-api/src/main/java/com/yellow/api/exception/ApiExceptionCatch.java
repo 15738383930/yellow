@@ -1,11 +1,13 @@
 package com.yellow.api.exception;
 
 import com.yellow.api.model.response.AuthCode;
+import com.yellow.common.entity.response.CommonCode;
 import com.yellow.common.entity.response.ResponseResult;
 import com.yellow.common.exception.BizException;
 import com.yellow.common.exception.ExceptionCatch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -56,6 +58,20 @@ public class ApiExceptionCatch extends ExceptionCatch {
      */
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseResult internalAuthenticationServiceException(InternalAuthenticationServiceException e){
-        return ResponseResult.get(((BizException) e.getCause()).getResultCode());
+        if (e.getCause() instanceof BizException) {
+            return ResponseResult.get(((BizException) e.getCause()).getResultCode());
+        }
+        return ResponseResult.get(AuthCode.AUTH_LOGIN_ERROR);
+    }
+
+    /**
+     * 捕获登录超时异常<p>
+     * @author Hao.
+     * @date 2020/4/4 11:42
+     * @param e
+     */
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ResponseResult authenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException e){
+        return ResponseResult.get(CommonCode.UNAUTHENTICATED);
     }
 }

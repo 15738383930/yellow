@@ -13,7 +13,7 @@ import java.util.Date;
 /**
  * 基本数据模型<p>
  *     <li>提供基本属性</li>
- *     <li>提供基本属性的动态赋值{@link com.yellow.common.config.MybatisPlusConfig}</li>
+ *     <li>提供基本属性的动态赋值{@link com.yellow.api.config.MybatisPlusConfig}</li>
  *     PS:基于mybatis-plus
  * @author Hao.
  * @version 1.0
@@ -39,9 +39,6 @@ public class BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
-
-    @ApiModelProperty(value = "是否删除 1-是 0-否")
-    private Integer isDel;
 
     private static final long serialVersionUID = 1L;
 }

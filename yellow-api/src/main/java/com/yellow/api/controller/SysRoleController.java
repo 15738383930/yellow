@@ -20,6 +20,8 @@ import com.yellow.common.entity.response.ObjectResponseResult;
 import com.yellow.common.entity.response.QueryResponseResult;
 import com.yellow.common.entity.response.ResponseResult;
 import com.yellow.common.util.StringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,11 +31,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 角色管理
- *
- * @author Mark sunlightcs@gmail.com
- */
+@Api(tags = "角色管理")
 @RestController
 @RequestMapping("/sys/role")
 public class SysRoleController extends BaseController {
@@ -41,19 +39,15 @@ public class SysRoleController extends BaseController {
 	@Autowired
 	private SysRoleService sysRoleService;
 
-	/**
-	 * 角色列表
-	 */
+	@ApiOperation("分页查询列表数据")
 	@PreAuthorize("hasAuthority('sys:role:list')")
 	@GetMapping(value = "/page/list/{page}/{size}")
 	public QueryResponseResult<SysRole> pageList(@PathVariable("page") int page, @PathVariable("size") int size, QuerySysRoleRequest request) {
 		super.setDataPermissions(request);
 		return sysRoleService.pageList(page, size, request);
 	}
-	
-	/**
-	 * 角色列表
-	 */
+
+	@ApiOperation("角色列表")
 	@GetMapping("/select")
 	@PreAuthorize("hasAuthority('sys:role:select')")
 	public QueryResponseResult<SysRole> select(){
@@ -66,10 +60,8 @@ public class SysRoleController extends BaseController {
 		List<SysRole> list = sysRoleService.list(lambdaQuery);
 		return QueryResponseResult.success(list, list.size());
 	}
-	
-	/**
-	 * 角色信息
-	 */
+
+	@ApiOperation("角色信息")
 	@GetMapping("/info/{roleId}")
 	@PreAuthorize("hasAuthority('sys:role:info')")
 	public ObjectResponseResult<SysRoleExt> info(@PathVariable("roleId") Integer roleId){
@@ -85,10 +77,8 @@ public class SysRoleController extends BaseController {
 		
 		return ObjectResponseResult.success(o);
 	}
-	
-	/**
-	 * 保存角色
-	 */
+
+	@ApiOperation("保存角色")
 	@PostMapping("/save")
 	@PreAuthorize("hasAuthority('sys:role:save')")
 	public ResponseResult save(@Valid @RequestBody SysRoleExt role){
@@ -97,10 +87,8 @@ public class SysRoleController extends BaseController {
 
 		return ResponseResult.success();
 	}
-	
-	/**
-	 * 修改角色
-	 */
+
+	@ApiOperation("修改角色")
 	@PostMapping("/update/{id}")
 	@PreAuthorize("hasAuthority('sys:role:update')")
 	public ResponseResult update(@PathVariable("id") Integer id, @Valid @RequestBody SysRoleExt role){
@@ -109,10 +97,8 @@ public class SysRoleController extends BaseController {
 
 		return ResponseResult.success();
 	}
-	
-	/**
-	 * 删除角色
-	 */
+
+	@ApiOperation("删除角色")
 	@PostMapping("/delete")
 	@PreAuthorize("hasAuthority('sys:role:delete')")
 	public ResponseResult delete(@RequestBody Integer[] roleIds){

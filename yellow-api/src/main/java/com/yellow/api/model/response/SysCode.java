@@ -41,6 +41,14 @@ public enum SysCode implements ResultCode {
 
     CURRENT_USER_CANNOT_BE_DELETED(false, 21022, "当前用户不可删除！"),
 
+    DICTIONARY_ALREADY_EXISTS(false, 21023, "字典已存在！"),
+    DICTIONARY_NOT_EXIST(false, 21024, "字典不存在！"),
+    DICTIONARY_EXISTS_DICTIONARY_DATA(false, 21025,  "字典里面存在字典数据，不能删除"),
+    DICTIONARY_DATA_NOT_EXIST(false, 21026, "字典数据不存在！"),
+    DICTIONARY_DATA_ALREADY_EXISTS(false, 21027, "字典数据已存在！"),
+    DATA_MODEL_ALREADY_EXISTS(false, 21028, "数据模型已存在！"),
+    DATA_MODEL_NOT_EXIST(false, 21029, "数据模型不存在！"),
+
 
     ;
 

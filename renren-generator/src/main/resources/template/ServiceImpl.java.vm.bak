@@ -1,0 +1,39 @@
+package ${package}.${moduleName}.service.impl;
+
+
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import ${package}.${moduleName}.service.I${className}Service;
+
+import ${package}.${moduleName}.mapper.${className}Mapper;
+import ${package}.${moduleName}.entity.${className};
+import ${package}.${moduleName}.entity.ext.${className}Ext;
+import ${package}.${moduleName}.entity.request.Query${className}Request;
+
+import com.yellow.common.constant.Constants;
+import com.yellow.common.entity.response.QueryResponseResult;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageSerializable;
+
+import javax.annotation.Resource;
+
+
+@Service
+public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${className}> implements I${className}Service {
+
+    @Resource
+    private ${className}Mapper ${classname}Mapper;
+
+    @Override
+    public QueryResponseResult<${className}Ext> pageList(int page, int size, Query${className}Request request) {
+        // 加载分页组件
+        PageHelper.startPage(Math.max(page, 1), Math.min((size >= 1 ? size : Constants.PAGE_SIZE_DEFAULT), Constants.PAGE_SIZE_MAX));
+
+        PageSerializable<${className}Ext> pageList = new PageSerializable<>(${classname}Mapper.findList(request));
+
+        return QueryResponseResult.success(pageList.getList(), pageList.getTotal());
+    }
+
+}

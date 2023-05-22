@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yellow.api.mapper.SysModelDictionaryMapper">
+  <resultMap id="BaseResultMap" type="com.yellow.api.model.SysModelDictionary">
+    <!--@mbg.generated-->
+    <!--@Table sys_model_dictionary-->
+    <id column="model_id" property="modelId" />
+    <id column="dictionary_id" property="dictionaryId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    model_id, dictionary_id
+  </sql>
+</mapper>

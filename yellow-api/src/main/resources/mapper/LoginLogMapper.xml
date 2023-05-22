@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yellow.api.mapper.LoginLogMapper">
+    <select id="findList" resultType="LoginLogExt">
+        select id,
+               username,
+               ip,
+               address,
+               browser,
+               os,
+               status,
+               login_time
+        from sys_login_log
+        <where>
+            <if test="@com.yellow.common.util.StringUtils@isNotEmpty(key)">
+                and username = #{key}
+            </if>
+
+            <!--<if test="@java.util.Objects@nonNull(int)">
+                and field = #{int}
+            </if>-->
+
+            <!--<if test="!@org.springframework.util.CollectionUtils@isEmpty(list)">
+                and field in
+                <foreach collection="list" item="o" open="(" separator="," close=")">
+                    #{o}
+                </foreach>
+            </if>-->
+        </where>
+    </select>
+</mapper>

@@ -97,4 +97,8 @@ public class Constants {
 
     // 默认ip
     public static final String DEFAULT_REQUEST_IP = "127.0.0.1";
+
+    public static final String DICTIONARY_KEY = "dictionary:";
+
+    public static final String DICTIONARY_FLAG = "dictionary";
 }

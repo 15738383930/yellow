@@ -1,5 +1,6 @@
 package com.yellow.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yellow.api.model.valid.AddGroup;
 import com.yellow.api.model.valid.EditGroup;
 import com.yellow.common.entity.BaseEntity;
@@ -32,6 +33,7 @@ public class SysUser extends BaseEntity {
     /**
     * 密码
     */
+    @JsonIgnore
     @NotBlank(message = "密码不能为空！", groups = AddGroup.class)
     @ApiModelProperty(value = "密码")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#$%^&*?.]{8,16}$", message = "请输入8到16位，且至少包含大写字母、小写字母、数字的密码。", groups = AddGroup.class)
@@ -63,4 +65,7 @@ public class SysUser extends BaseEntity {
     * 备注
     */
     private String remark;
+
+    @ApiModelProperty(value = "是否删除 1-是 0-否")
+    private Integer isDel;
 }
