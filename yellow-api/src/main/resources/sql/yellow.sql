@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50712
 File Encoding         : 65001
 
-Date: 2023-05-18 14:52:27
+Date: 2023-05-22 10:47:01
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -32,6 +32,31 @@ CREATE TABLE `persistent_logins` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for sys_data_model
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_data_model`;
+CREATE TABLE `sys_data_model` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `model_name` varchar(100) NOT NULL COMMENT '数据模型名称',
+  `model_type` varchar(255) NOT NULL COMMENT '数据模型类型',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `sort` int(10) unsigned DEFAULT NULL COMMENT '排序',
+  `is_del` int(11) DEFAULT '0' COMMENT '是否删除：1-是 0-否',
+  `create_by` varchar(20) DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(20) DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dict_type` (`model_name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='系统数据模型';
+
+-- ----------------------------
+-- Records of sys_data_model
+-- ----------------------------
+INSERT INTO `sys_data_model` VALUES ('2', '阿巴', 'bb', '', '0', '1', 'zhouhao', '2023-05-19 11:16:51', 'zhouhao', '2023-05-19 11:16:51');
+INSERT INTO `sys_data_model` VALUES ('6', '女朋友', 'girlfriend', '测试一下女朋友的实力', '0', '0', 'zhouhao', '2023-05-19 13:12:54', 'zhouhao', '2023-05-19 13:12:54');
+
+-- ----------------------------
 -- Table structure for sys_detail_log
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_detail_log`;
@@ -51,32 +76,35 @@ CREATE TABLE `sys_detail_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dictionary`;
 CREATE TABLE `sys_dictionary` (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `dict_type` varchar(100) NOT NULL COMMENT '字典类型',
   `dict_name` varchar(255) NOT NULL COMMENT '字典名称',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `sort` int(10) unsigned DEFAULT NULL COMMENT '排序',
   `create_by` varchar(20) DEFAULT NULL COMMENT '创建者',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` bigint(20) DEFAULT NULL COMMENT '更新者',
+  `update_by` varchar(20) DEFAULT NULL COMMENT '更新者',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `dict_type` (`dict_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='字典类型';
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COMMENT='字典类型';
 
 -- ----------------------------
 -- Records of sys_dictionary
 -- ----------------------------
 INSERT INTO `sys_dictionary` VALUES ('1', 'gender', '性别', '', '0', '1067246875800000001', '2022-07-18 10:19:07', '1067246875800000001', '2022-07-18 10:19:07');
 INSERT INTO `sys_dictionary` VALUES ('2', 'notice_type', '站内通知-类型', '', '1', '1067246875800000001', '2022-07-18 10:19:07', '1067246875800000001', '2022-07-18 10:19:07');
-INSERT INTO `sys_dictionary` VALUES ('3', 'test', '测试', '', '0', '1067246875800000001', '2022-07-18 13:18:32', '1067246875800000001', '2022-07-18 13:18:32');
+INSERT INTO `sys_dictionary` VALUES ('4', 'gender', '性别（plus）', '', '0', 'zhouhao', '2023-05-19 11:03:24', 'zhouhao', '2023-05-19 11:03:24');
+INSERT INTO `sys_dictionary` VALUES ('6', 'sex', '性别(sex)', '', '0', 'zhouhao', '2023-05-19 11:15:59', 'zhouhao', '2023-05-19 11:15:59');
+INSERT INTO `sys_dictionary` VALUES ('7', 'type', '类型', '女朋友', '0', 'zhouhao', '2023-05-19 13:13:45', 'zhouhao', '2023-05-19 13:13:45');
+INSERT INTO `sys_dictionary` VALUES ('8', 'favoriteFood', '喜欢的食物', '女朋友', '0', 'zhouhao', '2023-05-19 13:24:45', 'zhouhao', '2023-05-19 13:24:45');
+INSERT INTO `sys_dictionary` VALUES ('9', 'touristPlace', '旅游地', '女朋友', '0', 'zhouhao', '2023-05-19 13:26:10', 'zhouhao', '2023-05-19 13:26:10');
 
 -- ----------------------------
 -- Table structure for sys_dictionary_data
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dictionary_data`;
 CREATE TABLE `sys_dictionary_data` (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `dict_type_id` bigint(20) NOT NULL COMMENT '字典类型ID',
   `dict_label` varchar(255) NOT NULL COMMENT '字典标签',
   `dict_value` varchar(255) DEFAULT NULL COMMENT '字典值',
@@ -89,7 +117,7 @@ CREATE TABLE `sys_dictionary_data` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_dict_type_value` (`dict_type_id`,`dict_value`),
   KEY `idx_sort` (`sort`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='字典数据';
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COMMENT='字典数据';
 
 -- ----------------------------
 -- Records of sys_dictionary_data
@@ -100,6 +128,21 @@ INSERT INTO `sys_dictionary_data` VALUES ('3', '1', '保密', '2', '', '2', '106
 INSERT INTO `sys_dictionary_data` VALUES ('4', '2', '公告', '0', '', '0', '1067246875800000001', '2022-07-18 10:19:07', '1067246875800000001', '2022-07-18 10:19:07');
 INSERT INTO `sys_dictionary_data` VALUES ('5', '2', '会议', '1', '', '1', '1067246875800000001', '2022-07-18 10:19:07', '1067246875800000001', '2022-07-18 10:19:07');
 INSERT INTO `sys_dictionary_data` VALUES ('6', '2', '其他', '2', '', '2', '1067246875800000001', '2022-07-18 10:19:07', '1067246875800000001', '2022-07-18 10:19:07');
+INSERT INTO `sys_dictionary_data` VALUES ('7', '6', '男啊', '1', '', '0', 'zhouhao', '2023-05-19 11:16:11', 'zhouhao', '2023-05-19 11:16:11');
+INSERT INTO `sys_dictionary_data` VALUES ('8', '6', '吧啊', '2', '', '0', 'zhouhao', '2023-05-19 11:16:18', 'zhouhao', '2023-05-19 11:16:18');
+INSERT INTO `sys_dictionary_data` VALUES ('9', '7', '安静', '1', '', '0', 'zhouhao', '2023-05-19 13:15:38', 'zhouhao', '2023-05-19 13:15:38');
+INSERT INTO `sys_dictionary_data` VALUES ('10', '7', '火辣', '2', '', '0', 'zhouhao', '2023-05-19 13:15:48', 'zhouhao', '2023-05-19 13:15:48');
+INSERT INTO `sys_dictionary_data` VALUES ('11', '7', '清爽', '3', '', '0', 'zhouhao', '2023-05-19 13:16:01', 'zhouhao', '2023-05-19 13:16:01');
+INSERT INTO `sys_dictionary_data` VALUES ('13', '8', '香蕉', '2', '', '0', 'zhouhao', '2023-05-19 13:25:07', 'zhouhao', '2023-05-19 13:25:07');
+INSERT INTO `sys_dictionary_data` VALUES ('15', '8', '黄瓜', '4', '', '0', 'zhouhao', '2023-05-19 13:25:33', 'zhouhao', '2023-05-19 13:25:33');
+INSERT INTO `sys_dictionary_data` VALUES ('16', '8', '火锅', '5', '', '0', 'zhouhao', '2023-05-19 13:25:42', 'zhouhao', '2023-05-19 13:25:42');
+INSERT INTO `sys_dictionary_data` VALUES ('18', '9', '摩洛哥', '4', '', '0', 'zhouhao', '2023-05-19 13:26:50', 'zhouhao', '2023-05-19 13:26:50');
+INSERT INTO `sys_dictionary_data` VALUES ('19', '9', '马尔代夫', '8', '', '0', 'zhouhao', '2023-05-19 13:27:26', 'zhouhao', '2023-05-19 13:27:26');
+INSERT INTO `sys_dictionary_data` VALUES ('20', '9', '杭州', '2', '', '0', 'zhouhao', '2023-05-19 14:25:28', 'zhouhao', '2023-05-19 14:25:28');
+INSERT INTO `sys_dictionary_data` VALUES ('21', '9', '夏威夷', '16', '', '0', 'zhouhao', '2023-05-19 14:25:57', 'zhouhao', '2023-05-19 14:25:57');
+INSERT INTO `sys_dictionary_data` VALUES ('22', '9', '日本', '32', '', '0', 'zhouhao', '2023-05-19 14:26:08', 'zhouhao', '2023-05-19 14:26:08');
+INSERT INTO `sys_dictionary_data` VALUES ('23', '8', '鸡蛋', '1', '', '0', 'zhouhao', '2023-05-19 14:26:30', 'zhouhao', '2023-05-19 14:26:30');
+INSERT INTO `sys_dictionary_data` VALUES ('24', '8', '奶茶', '3', '', '0', 'zhouhao', '2023-05-19 14:26:53', 'zhouhao', '2023-05-19 14:26:53');
 
 -- ----------------------------
 -- Table structure for sys_login_log
@@ -115,7 +158,7 @@ CREATE TABLE `sys_login_log` (
   `status` varchar(10) DEFAULT '成功' COMMENT '登录状态（成功/ 失败）',
   `login_time` datetime DEFAULT NULL COMMENT '访问时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48804 DEFAULT CHARSET=utf8 COMMENT='系统登录日志';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COMMENT='系统登录日志';
 
 -- ----------------------------
 -- Records of sys_login_log
@@ -141,7 +184,7 @@ CREATE TABLE `sys_menu` (
   `update_time` datetime DEFAULT NULL,
   `update_by` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统菜单/权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统菜单/权限表';
 
 -- ----------------------------
 -- Records of sys_menu
@@ -184,6 +227,37 @@ INSERT INTO `sys_menu` VALUES ('181', 'sys:dictionarydata:info', '字典数据�
 INSERT INTO `sys_menu` VALUES ('182', 'sys:dictionarydata:save', '字典数据保存', null, '2', '', '0', '27', '0', '0', '2023-05-18 14:47:53', 'zhouhao', '2023-05-18 14:47:53', 'zhouhao');
 INSERT INTO `sys_menu` VALUES ('183', 'sys:dictionarydata:update', '字典数据修改', null, '2', '', '0', '27', '0', '0', '2023-05-18 14:48:07', 'zhouhao', '2023-05-18 14:48:07', 'zhouhao');
 INSERT INTO `sys_menu` VALUES ('184', 'sys:dictionarydata:delete', '字典数据删除', null, '2', '', '0', '27', '0', '0', '2023-05-18 14:48:21', 'zhouhao', '2023-05-18 14:48:21', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('185', '', '代码生成', 'http://www.zhou.com:20001/', '1', 'mudedi', '4', '1', '0', '0', '2023-05-19 09:28:49', 'zhouhao', '2023-05-19 10:23:52', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('186', '', '数据字典', 'sys/datamodel', '1', 'tubiao', '5', '1', '0', '0', '2023-05-19 10:21:27', 'zhouhao', '2023-05-19 10:47:15', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('187', 'sys:datamodel:list', '列表', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:24:07', 'zhouhao', '2023-05-19 10:24:07', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('188', 'sys:datamodel:info', '详情', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:24:21', 'zhouhao', '2023-05-19 10:24:21', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('189', 'sys:datamodel:save', '保存', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:24:36', 'zhouhao', '2023-05-19 10:24:36', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('190', 'sys:datamodel:update', '修改', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:27:10', 'zhouhao', '2023-05-19 10:27:10', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('191', 'sys:datamodel:delete', '删除', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:27:35', 'zhouhao', '2023-05-19 10:27:35', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('192', 'sys:dictionary:select', '字典查询', '', '2', '', '0', '27', '0', '0', '2023-05-19 10:35:19', 'zhouhao', '2023-05-19 10:35:19', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('194', null, '系统登录日志', 'sys/loginlog', '1', 'config', '6', '1', '0', '0', null, null, null, null);
+INSERT INTO `sys_menu` VALUES ('195', 'sys:loginlog:list,sys:log:details', '查看', null, '2', null, '6', '194', '0', '0', null, null, null, null);
+
+-- ----------------------------
+-- Table structure for sys_model_dictionary
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_model_dictionary`;
+CREATE TABLE `sys_model_dictionary` (
+  `model_id` int(11) NOT NULL COMMENT '数据模型id',
+  `dictionary_id` bigint(20) NOT NULL COMMENT '字典id',
+  PRIMARY KEY (`model_id`,`dictionary_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据模型与系统字典关联表';
+
+-- ----------------------------
+-- Records of sys_model_dictionary
+-- ----------------------------
+INSERT INTO `sys_model_dictionary` VALUES ('1', '1');
+INSERT INTO `sys_model_dictionary` VALUES ('1', '2');
+INSERT INTO `sys_model_dictionary` VALUES ('2', '6');
+INSERT INTO `sys_model_dictionary` VALUES ('6', '6');
+INSERT INTO `sys_model_dictionary` VALUES ('6', '7');
+INSERT INTO `sys_model_dictionary` VALUES ('6', '8');
+INSERT INTO `sys_model_dictionary` VALUES ('6', '9');
 
 -- ----------------------------
 -- Table structure for sys_operate_log
@@ -201,7 +275,7 @@ CREATE TABLE `sys_operate_log` (
   `time` int(20) DEFAULT NULL COMMENT '请求耗时（毫秒）',
   `params` varchar(1000) DEFAULT NULL COMMENT '请求参数',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60426 DEFAULT CHARSET=utf8 COMMENT='系统操作日志';
+) ENGINE=InnoDB AUTO_INCREMENT=61094 DEFAULT CHARSET=utf8 COMMENT='系统操作日志';
 
 -- ----------------------------
 -- Records of sys_operate_log
@@ -230,7 +304,7 @@ CREATE TABLE `sys_role` (
 -- ----------------------------
 INSERT INTO `sys_role` VALUES ('1', 'ROLE_TEST', '测试管理员', '1', '负责系统各个功能模块的测试', '0', null, null, '2023-05-12 16:52:30', 'zhouhao');
 INSERT INTO `sys_role` VALUES ('5', 'ROLE_ADMIN', '管理员', '1', '', '0', null, null, '2023-05-15 09:56:16', 'zhouhao');
-INSERT INTO `sys_role` VALUES ('8', 'ROLE_DEMO', '演示人员', '1', '', '0', '2023-05-15 09:47:21', 'test', '2023-05-15 09:47:21', 'test');
+INSERT INTO `sys_role` VALUES ('8', 'ROLE_DEMO', '演示人员', '1', '', '1', '2023-05-15 09:47:21', 'test', '2023-05-15 09:47:21', 'test');
 INSERT INTO `sys_role` VALUES ('9', 'ROLE_SYSTEM', '系统管理员', '1', '', '0', '2023-05-15 09:57:10', 'zhouhao', '2023-05-15 09:57:10', 'zhouhao');
 INSERT INTO `sys_role` VALUES ('10', 'ROLE_ROLE', 'ROLE', '1', '', '1', '2023-05-15 10:32:31', 'zhouhao', '2023-05-15 10:32:31', 'zhouhao');
 
@@ -276,11 +350,6 @@ INSERT INTO `sys_role_menu` VALUES ('5', '23');
 INSERT INTO `sys_role_menu` VALUES ('5', '24');
 INSERT INTO `sys_role_menu` VALUES ('5', '25');
 INSERT INTO `sys_role_menu` VALUES ('5', '26');
-INSERT INTO `sys_role_menu` VALUES ('8', '1');
-INSERT INTO `sys_role_menu` VALUES ('8', '2');
-INSERT INTO `sys_role_menu` VALUES ('8', '3');
-INSERT INTO `sys_role_menu` VALUES ('8', '15');
-INSERT INTO `sys_role_menu` VALUES ('8', '19');
 INSERT INTO `sys_role_menu` VALUES ('9', '1');
 INSERT INTO `sys_role_menu` VALUES ('9', '2');
 INSERT INTO `sys_role_menu` VALUES ('9', '3');
@@ -317,12 +386,12 @@ CREATE TABLE `sys_user` (
   `update_time` datetime DEFAULT NULL,
   `update_by` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COMMENT='系统用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 COMMENT='系统用户表';
 
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES ('1', 'zhouhao', '$2a$10$MFzu.UvURdfB52ZyRVGTYed1DYLwac4Nsgy4zTGkLkzH10V0D7IV6', '那个男人', null, '2023-05-18 14:48:36', '1', '', '0', null, null, '2021-05-12 16:37:49', 'zhouhao');
+INSERT INTO `sys_user` VALUES ('1', 'zhouhao', '$2a$10$MFzu.UvURdfB52ZyRVGTYed1DYLwac4Nsgy4zTGkLkzH10V0D7IV6', '那个男人', null, '2023-05-22 10:34:03', '1', '', '0', null, null, '2021-05-12 16:37:49', 'zhouhao');
 INSERT INTO `sys_user` VALUES ('7', 'test', '$2a$10$5R.faR.5ZuQJbR29dSu58uR450dVvXw/qNpfTz9UkgfgNyNV6LRAa', '测试管理员', '01234567891', '2021-04-22 18:57:54', '1', null, '0', null, null, '2021-04-22 18:57:54', 'test');
 INSERT INTO `sys_user` VALUES ('22', 'admin', '$2a$10$dJUEt2lFwx3Bl1RPnrJU.u.rILw7Rdz1qjfBi4uGMhmWUYg6OWU3G', '超级管理员', null, '2021-05-12 16:30:00', '1', '超级管理员，只此一枚哦~', '1', '2021-04-06 10:55:13', 'zhouhao', '2021-05-12 16:30:00', 'admin');
 INSERT INTO `sys_user` VALUES ('31', 'system', '$2a$10$BCl5UST4j6tNjPjZOff0AOzyRJSMNJW/lWkIOWAUz5N/alz7N/QaK', '系统管理员', null, '2021-04-09 16:09:18', '1', null, '1', '2021-04-09 15:14:38', 'zhouhao', '2021-04-09 16:09:18', 'system');
@@ -350,7 +419,6 @@ CREATE TABLE `sys_user_role` (
 -- ----------------------------
 INSERT INTO `sys_user_role` VALUES ('1', '4');
 INSERT INTO `sys_user_role` VALUES ('7', '1');
-INSERT INTO `sys_user_role` VALUES ('7', '8');
 INSERT INTO `sys_user_role` VALUES ('22', '4');
 INSERT INTO `sys_user_role` VALUES ('31', '5');
 INSERT INTO `sys_user_role` VALUES ('32', '4');
@@ -359,6 +427,5 @@ INSERT INTO `sys_user_role` VALUES ('34', '1');
 INSERT INTO `sys_user_role` VALUES ('35', '1');
 INSERT INTO `sys_user_role` VALUES ('36', '1');
 INSERT INTO `sys_user_role` VALUES ('37', '1');
-INSERT INTO `sys_user_role` VALUES ('38', '8');
 INSERT INTO `sys_user_role` VALUES ('39', '9');
 INSERT INTO `sys_user_role` VALUES ('40', '5');
