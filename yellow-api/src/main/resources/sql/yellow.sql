@@ -228,7 +228,7 @@ INSERT INTO `sys_menu` VALUES ('182', 'sys:dictionarydata:save', '字典数据�
 INSERT INTO `sys_menu` VALUES ('183', 'sys:dictionarydata:update', '字典数据修改', null, '2', '', '0', '27', '0', '0', '2023-05-18 14:48:07', 'zhouhao', '2023-05-18 14:48:07', 'zhouhao');
 INSERT INTO `sys_menu` VALUES ('184', 'sys:dictionarydata:delete', '字典数据删除', null, '2', '', '0', '27', '0', '0', '2023-05-18 14:48:21', 'zhouhao', '2023-05-18 14:48:21', 'zhouhao');
 INSERT INTO `sys_menu` VALUES ('185', '', '代码生成', 'http://www.zhou.com:20001/', '1', 'mudedi', '4', '1', '0', '0', '2023-05-19 09:28:49', 'zhouhao', '2023-05-19 10:23:52', 'zhouhao');
-INSERT INTO `sys_menu` VALUES ('186', '', '数据字典', 'sys/datamodel', '1', 'tubiao', '5', '1', '0', '0', '2023-05-19 10:21:27', 'zhouhao', '2023-05-19 10:47:15', 'zhouhao');
+INSERT INTO `sys_menu` VALUES ('186', '', '数据模型', 'sys/datamodel', '1', 'tubiao', '5', '1', '0', '0', '2023-05-19 10:21:27', 'zhouhao', '2023-05-19 10:47:15', 'zhouhao');
 INSERT INTO `sys_menu` VALUES ('187', 'sys:datamodel:list', '列表', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:24:07', 'zhouhao', '2023-05-19 10:24:07', 'zhouhao');
 INSERT INTO `sys_menu` VALUES ('188', 'sys:datamodel:info', '详情', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:24:21', 'zhouhao', '2023-05-19 10:24:21', 'zhouhao');
 INSERT INTO `sys_menu` VALUES ('189', 'sys:datamodel:save', '保存', '', '2', '', '0', '186', '0', '0', '2023-05-19 10:24:36', 'zhouhao', '2023-05-19 10:24:36', 'zhouhao');
@@ -391,11 +391,10 @@ CREATE TABLE `sys_user` (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES ('1', 'zhouhao', '$2a$10$MFzu.UvURdfB52ZyRVGTYed1DYLwac4Nsgy4zTGkLkzH10V0D7IV6', '那个男人', null, '2023-05-22 10:34:03', '1', '', '0', null, null, '2021-05-12 16:37:49', 'zhouhao');
+INSERT INTO `sys_user` VALUES ('1', 'zhouhao', '$2a$10$bmdEfJck98Bc8Up/QcsVkue6GSXftfxk3qyZDY7dZSPb0LFlCXoHy', '那个男人', null, '2023-05-22 10:34:03', '1', '', '0', null, null, '2021-05-12 16:37:49', 'zhouhao');
 INSERT INTO `sys_user` VALUES ('7', 'test', '$2a$10$5R.faR.5ZuQJbR29dSu58uR450dVvXw/qNpfTz9UkgfgNyNV6LRAa', '测试管理员', '01234567891', '2021-04-22 18:57:54', '1', null, '0', null, null, '2021-04-22 18:57:54', 'test');
-INSERT INTO `sys_user` VALUES ('22', 'admin', '$2a$10$dJUEt2lFwx3Bl1RPnrJU.u.rILw7Rdz1qjfBi4uGMhmWUYg6OWU3G', '超级管理员', null, '2021-05-12 16:30:00', '1', '超级管理员，只此一枚哦~', '1', '2021-04-06 10:55:13', 'zhouhao', '2021-05-12 16:30:00', 'admin');
+INSERT INTO `sys_user` VALUES ('22', 'admin', '$2a$10$dJUEt2lFwx3Bl1RPnrJU.u.rILw7Rdz1qjfBi4uGMhmWUYg6OWU3G', '管理员', null, '2021-05-12 16:30:00', '1', '超级管理员，只此一枚哦~', '1', '2021-04-06 10:55:13', 'zhouhao', '2021-05-12 16:30:00', 'admin');
 INSERT INTO `sys_user` VALUES ('31', 'system', '$2a$10$BCl5UST4j6tNjPjZOff0AOzyRJSMNJW/lWkIOWAUz5N/alz7N/QaK', '系统管理员', null, '2021-04-09 16:09:18', '1', null, '1', '2021-04-09 15:14:38', 'zhouhao', '2021-04-09 16:09:18', 'system');
-INSERT INTO `sys_user` VALUES ('32', 'yangzhiwei', '$2a$10$puHJ7tRnF./wCZN7mFyVHeq.jmiXEdfkO5Fzg9dsL4DbfpZjuh2BK', '杨智伟', null, '2021-04-15 09:30:48', '1', null, '1', '2021-04-12 13:38:59', 'zhouhao', '2021-04-15 09:30:48', 'yangzhiwei');
 INSERT INTO `sys_user` VALUES ('33', 'test2', '$2a$10$jfmguJAl5AIfQD.KdcNRIePpwRIdqceuDqHDNPe8vUW0vV26QsgPS', '匿名玩家', null, '2021-04-25 09:38:28', '1', null, '1', null, null, '2021-04-25 09:38:28', 'test2');
 INSERT INTO `sys_user` VALUES ('34', 'show', '$2a$10$O4IeKGEGj6cYqwVfenFuYOZ5s9cQgpvfmNuRK5oUcp.szVwhqo0wK', '演示账号', null, '2022-01-12 13:15:07', '1', null, '0', null, null, '2022-01-12 13:15:07', 'show');
 INSERT INTO `sys_user` VALUES ('35', 'test001', '$2a$10$cHnJZP1QZ9DZXpXFqgBEAeVD0KPiFVmTgcRXnDd2JB8H772uZjvo2', 'test', '01234567891', null, '1', null, '1', '2023-05-12 16:19:12', 'zhouhao', '2023-05-12 16:19:12', 'zhouhao');
@@ -421,11 +420,9 @@ INSERT INTO `sys_user_role` VALUES ('1', '4');
 INSERT INTO `sys_user_role` VALUES ('7', '1');
 INSERT INTO `sys_user_role` VALUES ('22', '4');
 INSERT INTO `sys_user_role` VALUES ('31', '5');
-INSERT INTO `sys_user_role` VALUES ('32', '4');
 INSERT INTO `sys_user_role` VALUES ('33', '1');
 INSERT INTO `sys_user_role` VALUES ('34', '1');
 INSERT INTO `sys_user_role` VALUES ('35', '1');
 INSERT INTO `sys_user_role` VALUES ('36', '1');
 INSERT INTO `sys_user_role` VALUES ('37', '1');
 INSERT INTO `sys_user_role` VALUES ('39', '9');
-INSERT INTO `sys_user_role` VALUES ('40', '5');

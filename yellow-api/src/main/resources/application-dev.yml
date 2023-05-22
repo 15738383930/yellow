@@ -7,7 +7,7 @@ spring:
     druid:
       url: jdbc:mysql:///yellow?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=Asia/Shanghai&useLegacyDatetimeCode=false&useSSL=false
       username: root
-      password: Zhou$123456!
+      password:
       #配置初始化连接数大小
       initial-size: 10
       # 最大连接数
@@ -30,7 +30,6 @@ spring:
     database: 1
     host: 127.0.0.1
     port: 6379
-    #    password: ENC(BzrXgsL985ykjHuHZQososwG/KSPs6mb)
     jedis:
       pool:
         #最大连接数
@@ -43,7 +42,3 @@ spring:
         min-idle: 0
     #连接超时时间
     timeout: 10000
-
-file:
-  path: D://cad-file/
-  certpath: D://cad-cert-file/

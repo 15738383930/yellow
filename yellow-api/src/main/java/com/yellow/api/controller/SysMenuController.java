@@ -146,6 +146,10 @@ public class SysMenuController extends BaseController {
 	 * 验证参数是否正确
 	 */
 	private void verifyForm(SysMenu menu){
+		if(menu.getType() == Integer.parseInt(SysMenuCode.MENU_LEVEL_0.k()) ||
+				menu.getType() == Integer.parseInt(SysMenuCode.MENU_LEVEL_1.k())){
+			menu.setAuthCode(null);
+		}
 
 		// 菜单
 		if(menu.getType().toString().equals(SysMenuCode.MENU_LEVEL_1.k())){
